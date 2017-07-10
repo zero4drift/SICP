@@ -24,7 +24,7 @@
   (sqrt-iter 1.0 0 x))
 
 ; for certain number which is very small
-; determination on whether guess's power smaller than c plus x mostly depends on c, not x
+; determination on whether guess's squasre smaller than c plus x mostly depends on c, not x
 ; for certain number which is very large
-; guess would also be large, so guess as a float number scatters very much
-; the absolute value of guess's power minus x would always be larger than c
+; guess would also be large, so guess as a float number scatters
+; the absolute value of guess's square minus x would always be larger than c
