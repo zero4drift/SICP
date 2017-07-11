@@ -1,10 +1,27 @@
-;; (load "1.21.scm")
+(define (expmod base exp m)
+  (cond ((= exp 0) 1)
+	((even? exp)
+	 (remainder (square (expmod base (/ exp 2) m))
+		    m))
+	(else
+	 (remainder (* base (expmod base (- exp 1) m))
+		    m))))
+
+(define (fermat-test n)
+  (define (try-it a)
+    (= (expmod a n n) a))
+  (try-it (+ 1 (random (- n 1)))))
+
+(define (fast-prime? n times)
+  (cond ((= times 0) true)
+	((fermat-test n) (fast-prime? n (- times 1)))
+	(else false)))
 
 (define (timed-prime-test n)
   (start-prime-test n (runtime)))
 
 (define (start-prime-test n start-time)
-  (if (prime? n)
+  (if (fast-prime? n 100)
       (report-prime n (- (runtime) start-time))
       0))				;0 as a return value indicates failure
 
@@ -24,6 +41,5 @@
 (define (search-for-primes n)
   (search-for-primes-count n 3))
 
-;; (search-for-primes 1000)....1000 10000 10000 too samll, almost no time usage so the display is 0.
-;; (search-for-primes 1e10) time usage is roughly 3 times of 1e9, nearly (sqrt 3)
-;; could be concluded that time usage is proportional to running steps
+;; time usage of calculating on 1e24 is two times of 1e12
+;; so it's truly logarithmic growth

@@ -1,4 +1,21 @@
-;; (load "1.21.scm")
+(define (next n)
+  (if (= n 2)
+      (+ n 1)
+      (+ n 2)))
+
+(define (smallest-divisor n)
+  (find-divisor n 2))
+
+(define (find-divisor n test-divisor)
+  (cond ((> (square test-divisor) n) n)
+	((divides? test-divisor n) test-divisor)
+	(else (find-divisor n (next test-divisor)))))
+
+(define (divides? a b)
+  (= (remainder b a) 0))
+
+(define (prime? n)
+  (= n (smallest-divisor n)))
 
 (define (timed-prime-test n)
   (start-prime-test n (runtime)))
@@ -21,9 +38,9 @@
 	((= (timed-prime-test n) 1) (begin (set! count (- count 1)) (search-for-primes-count (+ n 2) count)))
 	((= (timed-prime-test n) 0) (search-for-primes-count (+ n 2) count))))
 
-(define (search-for-primes n)
+(define (search-for-primes-next n)
   (search-for-primes-count n 3))
 
-;; (search-for-primes 1000)....1000 10000 10000 too samll, almost no time usage so the display is 0.
-;; (search-for-primes 1e10) time usage is roughly 3 times of 1e9, nearly (sqrt 3)
-;; could be concluded that time usage is proportional to running steps
+;; the ratio is roughly 1.5
+;; why?
+;; Offical answer: This is mainly due to the NEXT procedure's IF test. The input did halve indeed, but we need to do an extra IF test.
