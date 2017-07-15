@@ -11,3 +11,5 @@
 (define (percent i)
   (/ (width i) (center i)))
 
+;; when procedure make-cent-percent  and a very amount percent are applied to construct a interval
+;; the result of div-interval applied to such intervals is approaching true
