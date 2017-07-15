@@ -8,3 +8,5 @@
 		  (add-interval (div-interval one r1)
 				(div-interval r2)))))
 
+;; when procedure make-cent-percent  and a very amount percent are applied to construct a interval
+;; the result of div-interval applied to such intervals is approaching true
