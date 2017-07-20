@@ -6,4 +6,4 @@
 
 (define tree-bits (encode song rock-tree)) ;84
 
-(define normal-bits (* 3 (length song))) ; suppose that length gets the actual number of elements in a list with sub-lists
+(define normal-bits (* 3 (length song))) ;108, it needs three bits to represent a symbol whose system contains 8 elements
