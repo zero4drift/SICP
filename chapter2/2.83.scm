@@ -7,12 +7,10 @@
   (apply-generic 'raise number))
 
 (define (scheme-number->rational number)
-  ((get 'make 'rational) (contents number) 1))
+  (make-rational number 1))
 
 (define (rational->real number)
-  (let ((content (contents number)))
-    ((get 'make 'real) (/ (numer content) (denom content)))))
+  (make-real (/ (numer number) (denom number))))
 
 (define (real->complex number)
-  (let ((content (contents number)))
-    ((get 'make-from-real-imag 'complex) content 0)))
+  (make-from-real-imag number 0))
