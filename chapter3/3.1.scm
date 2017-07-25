@@ -1,0 +1,5 @@
+(define (make-accumulator n)
+  (let ((initial n))
+    (lambda (amount)
+      (begin (set! initial (+ initial amount))
+	     initial))))
