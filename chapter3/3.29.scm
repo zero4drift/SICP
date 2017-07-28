@@ -7,3 +7,6 @@
     (and-gate invert-1 invert-2 and-invert1-invert2)
     (inverter and-invert1-invert2 output))
   'ok)
+
+;; concurrent case, delay time is hard to determine
+;; about (+ (* 3 inverter-delay) and-gate-delay)
