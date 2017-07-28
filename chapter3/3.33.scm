@@ -1,0 +1,11 @@
+(define a (make-connector))
+(define b (make-connector))
+(define c (make-connector))
+
+(define (averager a b c)
+  (let ((u (make-connector))
+	(v (make-connector)))
+    (multiplier u c v)
+    (adder a b v)
+    (constant u 2)
+    'ok))
