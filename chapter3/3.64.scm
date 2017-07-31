@@ -1,0 +1,7 @@
+(define (stream-limit s t)
+  (let ((sub-s (stream-map - s (stream-cdr s))))
+    (define (get-the-desired sub-streams stream)
+      (if (< (abs (stream-car sub-streams)) t)
+	  (stream-car stream)
+	  (get-the-desired (stream-cdr sub-streams) (stream-cdr stream))))
+    (get-the-desired sub-s (stream-cdr s))))
