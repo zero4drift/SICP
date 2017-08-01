@@ -1,10 +1,13 @@
+(define (cube-pair pair)
+  (+ (expt (car p) 3) (expt (cadr p) 3)))
+
 (define base-stream
   (weighted-pairs
    integers
    integers
-   (lambda (p) (+ (expt (car p) 3) (expt (cadr p) 3)))))
+   cube-pair))
 
-(define Ramanujan-stream
+(define Ramanujan-pairs
   (define (get-desired s1 s2)
     (if (= (stream-car s1) 0)
 	(cons-stream
@@ -15,12 +18,15 @@
 	(get-desired
 	 (stream-cdr s1)
 	 (stream-cdr s2))))
-  (let ((rest-stream (stream-cdr base-stream)))
+  (let ((rest-stream (stream-cdr base-stream))
+	(cube-streams (stream-map cube-pair base-stream)))
     (ler ((sub-stream (stream-map
 		       -
-		       base-stream
-		       rest-stream)))
+		       cube-streams
+		       (stream-cdr cube-streams))))
 	 (get-desired
 	  sub-stream
 	  rest-stream))))
-	 
+
+(define Ramanujan-streams
+  (stream-map cube-pair Ramanujan-pairs))
