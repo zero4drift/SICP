@@ -20,7 +20,7 @@
 	 (stream-cdr s2))))
   (let ((rest-stream (stream-cdr base-stream))
 	(cube-streams (stream-map cube-pair base-stream)))
-    (ler ((sub-stream (stream-map
+    (let ((sub-stream (stream-map
 		       -
 		       cube-streams
 		       (stream-cdr cube-streams))))
