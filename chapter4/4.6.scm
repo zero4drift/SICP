@@ -8,7 +8,7 @@
   (car exp))
 
 (define (let-body exp)
-  (cadr exp))
+  (cdr exp))
 
 (define (var binding)
   (car binding))
