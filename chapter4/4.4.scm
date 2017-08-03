@@ -59,7 +59,7 @@
     (let ((first (first-predicate predicates))
 	  (rest (rest-predicates predicates)))
       (make-cond
-       ((true? first) true)
+       ((true? first) first)
        ((and (null? rest) (false? first)) false)
        (else (make-or rest))))))
 
