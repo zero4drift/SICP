@@ -1,6 +1,12 @@
 (define (make-frame bindings)
   bindings)
 
+(define (make-binding var val)
+  (cons var val))
+
+(define (make-bindings vars vals)
+  (map make-binding vars vals))
+
 (define (bindings-frame frame)
   frame)
 
@@ -23,12 +29,12 @@
   (cdr binding))
 
 (define (add-binding-to-frame! var val frame)
-  (let ((new-binding (cons val frame)))
+  (let ((new-binding (make-binding val frame)))
     (cons new-binding frame)))
 
 (define (extend-environment vars vals base-env)
   (if (= (length vars) (length vals))
-      (let ((bindings (map (lambda (x y) (cons x y)) vars vals)))
+      (let ((bindings (make-bindings vars vals)))
 	(cons (make-frame bindings) base-env))
       (if (< (length vars) (length vals))
 	  (error "Too many arguments supplied" vars vals)
