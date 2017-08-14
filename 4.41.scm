@@ -1,0 +1,25 @@
+(define (multiple-dwelling-traditional)
+  (define (baker (list 1 2 3 4 5)))
+  (define (cooper (list 1 2 3 4 5)))
+  (define (fletcher (list 1 2 3 4 5)))
+  (define (miller (list 1 2 3 4 5)))
+  (define (smith (list 1 2 3 4 5)))
+
+  (define (requirements temp)
+    (apply
+     (lambda (baker cooper fletcher miller smith)
+       (and (> miller cooper)
+	    (not (= (abs (- smith fletcher)) 1))
+	    (not (= (abs (- fletcher cooper)) 1))
+	    (distinct? (list baker cooper fletcher miller smith))))
+     temp))
+
+  (define (arrange lists)
+    (if (null? lists)
+	'(())
+	(flatmap (lambda (x)
+		   (map (lambda (y) (cons x y))
+			(arrange (cdr lists))))
+		 (car lists))))
+
+  (filter requirements (arrange (list baker cooper fletcher miller smith))))
