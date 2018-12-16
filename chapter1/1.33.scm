@@ -24,4 +24,4 @@
 (define (gcd-product n)
   (define (gcd-equals-1? a)
     (= (gcd a n) 1))
-  (filtered-accumulate gcd-equals-1? * 1 keep-same 1 compute-next n))
+  (filtered-accumulate gcd-equals-1? * 1 keep-same 1 compute-next (- n 1)))
