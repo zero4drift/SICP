@@ -25,5 +25,5 @@
   (search-for-primes-count n 3))
 
 ;; (search-for-primes 1000)....1000 10000 10000 too samll, almost no time usage so the display is 0.
-;; (search-for-primes 1e10) time usage is roughly 3 times of 1e9, nearly (sqrt 3)
+;; (search-for-primes 1e10) time usage is roughly 3 times of 1e9, nearly (sqrt 10)
 ;; could be concluded that time usage is proportional to running steps
