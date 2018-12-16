@@ -9,12 +9,11 @@
 (define (even? x)
   (= (remainder x 2) 0))
 
-(define (multi-iter x y z)
+(define (multi-iter x y)
   (cond ((or (= x 0) (= y 0)) 0)
-	((and (= y 1) (= z 0)) x)
-	((= y 1) z)
-	((even? y) (multi-iter x (/ y 2) (+ z (double x))))
-	(else (+ x (multi-iter x (- y 1) z)))))
+	((= y 1) x)
+	((even? y) (multi-iter (double x) (/ y 2)))
+	(else (+ x (multi-iter x (- y 1))))))
 
 (define (* x y)
-  (multi-iter x y 0))
+  (multi-iter x y))
