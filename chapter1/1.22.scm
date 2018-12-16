@@ -18,7 +18,7 @@
 (define (search-for-primes-count n count)
   (cond ((= (remainder n 2) 0) (search-for-primes-count (+ n 1) count))
 	((= count 0) 'ok)
-	((= (timed-prime-test n) 1) (begin (set! count (- count 1)) (search-for-primes-count (+ n 2) count)))
+	((= (timed-prime-test n) 1) (search-for-primes-count (+ n 2) (- count 1)))
 	((= (timed-prime-test n) 0) (search-for-primes-count (+ n 2) count))))
 
 (define (search-for-primes n)
