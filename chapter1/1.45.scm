@@ -11,6 +11,6 @@
   (fixed-point
    ((repeated
      average-damp
-     ((lambda (i) (quotient i 2)) n))
+     (quotient n 2))
     (lambda (y) (/ x (expt y (- n 1)))))
-    1.0))
+   1.0))
