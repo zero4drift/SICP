@@ -6,7 +6,7 @@
   (let ((one (make-interval 1 1)))
     (div-interval one
 		  (add-interval (div-interval one r1)
-				(div-interval r2)))))
+				(div-interval one r2)))))
 
-;; when procedure make-cent-percent  and a very amount percent are applied to construct a interval
-;; the result of div-interval applied to such intervals is approaching true
+;; when procedure make-cent-percent and a very small amount percent are applied to construct a interval,
+;; the results of both procedures defined before applied to such intervals are approaching the same.

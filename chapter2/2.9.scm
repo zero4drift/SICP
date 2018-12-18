@@ -5,4 +5,4 @@
   (let ((width1 (interval-width interval1))
 	(width2 (interval-width interval2))
 	(combined-width (interval-width (combiner interval1 interval2))))
-   (or (= combined-width (+ width1 width2)) (= combined-width (- width1 width2)))))
+   (= combined-width (+ width1 width2))))
