@@ -26,11 +26,15 @@
   (* (width rectangle)
      (length rectangle)))
 
-;;another way
+;; anoterh way, no need to modify procedur perimeter and size
+;; add "-another" to names just to avoid interpreter error
+;; remove it when there is a need of test
 
 (define (make-rectangle-another start width length)
-  (let ((x-start (x-point start))
-	(y-start (y-point start)))
-    (let ((seg1 (make-segment start (make-point x-start (+ y-start length))))
-	  (seg2 (make-segment start (make-point (+ x-start width) y-start))))
-      (cons seg1 seg2))))
+  (cons start (const width length)))
+
+(define (width-another rectangle)
+  (car (cdr rectangle)))
+
+(define (length-another rectangle)
+  (cdr (cdr rectangle)))
