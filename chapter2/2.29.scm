@@ -1,4 +1,13 @@
+;; the former version of this answer is totally wrong
+;; due to the misunderstanding of exercise 2.29.
+
 ;; a
+
+(define (make-mobile left right)
+  (list left right))
+
+(define (make-branch length structure)
+  (list length structure))
 
 (define (left-branch item)
   (car item))
@@ -15,31 +24,34 @@
 ;; b
 
 (define (total-weight item)
-  (define (iter item result)
-    (cond ((null? item) result)
-	  ((pair? (car item)) (iter (right-branch item) (total-weight (left-branch item))))
-	  (else (+ (branch-structure item) result))))
-  (iter item 0))
+  (define (recursive item)
+    (cond ((null? item) 0)
+	  ((number? item) item)
+	  (else (+ (recursive (branch-structure (left-branch item)))
+		   (recursive (branch-structure (right-branch item)))))))
+  (recursive item))
 
 ;; c
 
 (define (total-moment item)
-  (define (iter item result)
-    (cond ((null? item) result)
-	  ((number? item) item)
-	  ((pair? (car item)) (iter (right-branch item) (total-moment (left-branch item))))
-	  ((pair? item) (+ (* (branch-length item) (total-moment (branch-structure item))) result))))
-  (iter item 0))
+  (* (branch-length item) (total-weight (branch-structure item))))
 
 (define (balance? item)
-  (if (not (pair? (car item)))
+  (if (not (pair? item))
       true
       (let ((left (left-branch item)) (right (right-branch item)))
-	(if (= (total-moment left) (total-moment right))
-	    (and (balance? left) (balance? right))
-	    false))))
+	(and (= (total-moment left) (total-moment right))
+	     (balance? (branch-structure left))
+	     (balance? (branch-structure right))))))
 
 ;; d
+
+(define (make-mobile-mod left right)
+  (cons left right))
+
+(define (make-branch-mod length structure)
+  (cons length structure))
+
 
 ;; just modify right-branch and branch-structure
 
