@@ -1,3 +1,5 @@
+;; (load "./2.18.scm")
+
 (define (fringe tree)
   (define (iter tree result)
     (cond ((null? tree) result)
