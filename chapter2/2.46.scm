@@ -24,7 +24,7 @@
        (/ (xcor-vect v1) (xcor-vect v2))
        (/ (ycor-vect v1) (ycor-vect v2)))))
 
-(define (scale-vect v s)
+(define (scale-vect s v)
   (make-vect
    (* s (xcor-vect v))
    (* s (ycor-vect v))))
