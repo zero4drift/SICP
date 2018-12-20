@@ -1,5 +1,5 @@
 ;; a
-;; fuck it
+;; 没心情算坐标
 
 ;; b
 
@@ -9,7 +9,7 @@
       (let ((up (up-split painter n))
 	    (right (right-split painter n)))
 	(beside (below painter up)
-		(below (right (corner-split painter (- n 1))))))))
+		(below right (corner-split painter (- n 1)))))))
 
 ;; c
 
