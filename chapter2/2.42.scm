@@ -1,3 +1,7 @@
+;; (load "2.33.scm")
+;; (load "2.40.scm")
+;; (load "2.41.scm")
+
 (define (queens board-size)
   (define (queen-cols k)
     (if (= k 0)
@@ -14,21 +18,29 @@
 
 (define empty-board '())
 
-(define (adjoin-position new-row k rest-of-queens)
-  (append rest-of-queens (list (list new-row k))))
+(define (make-position row k)
+  (list k row))
 
-(define (list-ref items n)
-  (if (= n 0)
-      (car items)
-      (list-ref (cdr items) (- n 1))))
+(define (row-position p)
+  (cadr p))
+
+(define (k-position p)
+  (car p))
+
+(define (adjoin-position new-row k rest-of-queens)
+  (cons (make-position new-row k) rest-of-queens))
+
+(define (get-row positions k)
+  (cond ((null? (car positions)) (error "invalid operation" k))
+	((= (k-position (car positions)) k) (row-position (car positions)))
+	(else (get-row (cdr positions) k))))
 
 (define (safe? k positions)
   (if (= k 1)
-      true
-      (let ((last (list-ref positions (- k 1)))
-	    (test (list-ref positions (- k 2))))
-	(let ((last-row (car last)) (test-row (car test)))
-	  (and
-	   (not (= last-row test-row))
-	   (not (= (+ 1 last-row) test-row))
-	   (not (= (+ 1 test-row) last-row)))))))
+      'true
+      (let ((r1 (get-row positions k))
+	    (r2 (get-row positions (- k 1))))
+	(and
+	 (not (= r1 r2))
+	 (not (= (+ 1 r1) r2))
+	 (not (= (+ 1 r2) r1))))))
