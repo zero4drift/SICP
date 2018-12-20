@@ -1,3 +1,5 @@
+;; based on a more general procedure map indicated by footnote 83
+
 (define (dot-product v w)
   (accumulate + 0 (map * v w)))
 
