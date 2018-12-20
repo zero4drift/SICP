@@ -11,7 +11,7 @@
   (caddr frame))
 
 
-(define (make-frame origin edge2 edge2)
+(define (make-frame origin edge1 edge2)
   (cons origin (cons edge1 edge2)))
 
 (define (origin-frame frame)
