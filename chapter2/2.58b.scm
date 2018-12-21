@@ -33,46 +33,61 @@
   (cond ((=number? a1 0) a2)
 	((=number? a2 0) a1)
 	((and (number? a1) (number? a2)) (+ a1 a2))
-	(else (list '+ a1 a2))))
+	(else (list a1 '+ a2))))
 
 (define (make-product m1 m2)
   (cond ((or (=number? m1 0) (=number? m2 0)) 0)
 	((=number? m1 1) m2)
 	((=number? m2 1) m1)
 	((and (number? m1) (number? m2)) (* m1 m2))
-	(else (list '* m1 m2))))
+	(else (list m1 '* m2))))
+
+;; extract the expression sequence chained with *
+(define (=multi? exp)
+  (and (symbol? exp) (eq? exp '*)))
+
+(define (=sum? exp)
+  (and (symbol? exp) (eq? exp '+)))
+
+(define (multi-first exp)
+  (cond ((or (null? exp) (=sum? (car exp))) '())
+	((or (=multi? (car exp)) (not (=sum? exp)))
+	 (cons (car exp) (multi-first (cdr exp))))))
+;; ends here
+
+;; handle special case of left expression(augend, etc)
+(define (get-left exp)
+  (if (= (length exp) 1)
+      (car exp)
+      exp))
 
 (define (sum? x)
-  (and (pair? x) (eq? (car x) '+)))
+  (and (pair? x) (memq '+ x)))
 
-(define (addend s) (cadr s))
+(define (addend s)
+	  (let ((first (multi-first s)))
+	    (get-left first)))
 
-(define (augend s)
-  (if (null? (cddr s))
-      0
-      (cons '+ (cddr s))))
+(define (augend s) (get-left (cdr (memq '+ s))))
 
 (define (product? x)
-  (and (pair? x) (eq? (car x) '*)))
+  (and (pair? x) (eq? (cadr x) '*)))
 
-(define (multiplier p) (cadr p))
+(define (multiplier p) (car p))
 
-(define (multiplicand p)
-  (if (null? (cddr p))
-      1
-      (cons '* (cddr p))))
+(define (multiplicand p) (get-left (cddr p)))
 
 (define (exponentiation? x)
-  (and (pair? x) (eq? (car x) '**)))
+  (and (pair? x) (eq? (cadr x) '**)))
 
 (define (exponent x)
-  (caddr x))
+  (get-left (cddr x)))
 
 (define (base x)
-  (cadr x))
+  (car x))
 
 (define (make-exponentiation base exponent)
   (cond ((=number? exponent 0) 1)
 	((=number? exponent 1) base)
 	((=number? base 1) 1)
-	(else (list '** base exponent))))
+	(else (list base '** exponent))))
