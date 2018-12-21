@@ -42,18 +42,11 @@
 	((and (number? m1) (number? m2)) (* m1 m2))
 	(else (list m1 '* m2))))
 
-;; extract the expression sequence chained with *
-(define (=multi? exp)
-  (and (symbol? exp) (eq? exp '*)))
-
-(define (=sum? exp)
-  (and (symbol? exp) (eq? exp '+)))
-
-(define (multi-first exp)
-  (cond ((or (null? exp) (=sum? (car exp))) '())
-	((or (=multi? (car exp)) (not (=sum? exp)))
-	 (cons (car exp) (multi-first (cdr exp))))))
-;; ends here
+;; extract the expression sequence chained with specified operator
+(define (first-part exp operator)
+  (if (or (null? exp) (eq? (car exp) operator))
+      '()
+      (cons (car exp) (first-part (cdr exp) operator))))
 
 ;; handle special case of left expression(augend, etc)
 (define (get-left exp)
@@ -65,17 +58,19 @@
   (and (pair? x) (memq '+ x)))
 
 (define (addend s)
-	  (let ((first (multi-first s)))
-	    (get-left first)))
+  (let ((first (first-part s '+)))
+    (get-left first)))
 
 (define (augend s) (get-left (cdr (memq '+ s))))
 
 (define (product? x)
-  (and (pair? x) (eq? (cadr x) '*)))
+  (and (pair? x) (memq '* x)))
 
-(define (multiplier p) (car p))
+(define (multiplier p)
+  (let ((first (first-part p '*)))
+    (get-left first)))
 
-(define (multiplicand p) (get-left (cddr p)))
+(define (multiplicand p) (get-left (cdr (memq '* p))))
 
 (define (exponentiation? x)
   (and (pair? x) (eq? (cadr x) '**)))
