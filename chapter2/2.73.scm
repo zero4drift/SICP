@@ -49,24 +49,24 @@
   (car x))
 
 (define (make-exponentiation base exponent)
-  (cond ((=number? exponent 0) 1
-	 ((=number? exponent 1) base)
-	 ((=number? base 1) 1)
-	 (else (list '** base exponent)))))
+  (cond ((=number? exponent 0) 1)
+	((=number? exponent 1) base)
+	((=number? base 1) 1)
+	(else (list '** base exponent))))
 
 
-(define (deriv-product . operands var)
+(define (deriv-product operands var)
   (make-sum
    (make-product (multiplier operands)
 		 (deriv (multiplicand operands) var))
    (make-product (deriv (multiplier operands) var)
 		 (multiplicand operands))))
 
-(define (deriv-sum . operands var)
+(define (deriv-sum operands var)
   (make-sum (deriv (addend operands) var)
 	    (deriv (augend operands) var)))
 
-(define (deriv-exponentiation . operands var)
+(define (deriv-exponentiation operands var)
   (make-product (exponent operands)
 		(make-product
 		 (make-exponentiation
