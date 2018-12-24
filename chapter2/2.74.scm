@@ -20,14 +20,15 @@
 ;; c
 
 (define (find-employee-record name file-list)
-  (if (null? file-list)
-      '()
-      (cons
-       (get-record name (car file-list))
-       (find-employee-record name (cdr file-list)))))
+  (define (iter file-list result)
+    (cond ((null? file-list) result)
+	  ((null? (get-record name (car file-list)))
+	   (iter (cdr file-list) result))
+	  (else (iter (cdr file-list) (cons (get-record name (car file-list)) results)))))
+  (iter file-list '()))
 
 
 ;; d
 
-;; give new and unique tags to this file and its certain records
-;; with the procedure put and the diffenent tags, install the corresponding procedure
+;; if possible, give new and unique tags to this file and its certain records
+;; with the procedure 'put' and new tags, install the corresponding procedures
