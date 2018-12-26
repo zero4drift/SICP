@@ -34,6 +34,10 @@
   
 ;; install types tower in one of  the official answers
 
+
+;; corresponding procedures based on below installer is much more efficient than
+;; mine, and if use this we only need to modify procedure lower-one, but I will
+;; keep my ugly answer
 (define (install-level-package)
   (put 'level 'scheme-number 1)
   (put 'level 'rational 2)
@@ -43,5 +47,6 @@
   (put 'level 'polar 4)
   'done)
 
-;; corresponding procedure based on this is much more efficient than mine
-;; but I will keep my ugly answer
+(define (level type)
+  (get 'level type))
+
