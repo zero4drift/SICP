@@ -5,13 +5,6 @@
 			   'complex)))
     (put 'types-tower 'number types-tower)))
 
-(define (get-number-higher-type type)
-  (let ((types-tower (get 'types-tower 'number)))
-    (let ((sub-types-tower (memq type types-tower)))
-      (if sub-types-tower
-	  (cadr sub-types-tower)
-	  (error "No higher type for this type" type)))))
-
 (define (lower-one type1 type2)
   (let ((types-tower (get 'types-tower 'number)))
     (let ((left-type1-tower (memq type1 types-tower))
