@@ -1,7 +1,7 @@
 (define (install-raise)
-  (put 'raise 'scheme-number scheme-number->rational)
-  (put 'raise 'rational rational->real)
-  (put 'raise 'real real->complex))
+  (put 'raise '(scheme-number) scheme-number->rational)
+  (put 'raise '(rational) rational->real)
+  (put 'raise '(real) real->complex))
 
 (define (raise number)
   (apply-generic 'raise number))
