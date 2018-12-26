@@ -9,6 +9,8 @@
 (define (scheme-number->rational number)
   (make-rational number 1))
 
+;; notice that we have not implement real package
+;; assume that it was implemented
 (define (rational->real number)
   (make-real (/ (numer number) (denom number))))
 

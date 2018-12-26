@@ -1,40 +1,53 @@
-(define (drop-scheme-number x)
-  (x))
+;; install project
+(define (project-rational x)
+  (make-scheme-number (round (/ (numer x) (denom x)))))
+(define (project-real x)
+  (make-scheme-number (round x)))
+;; notice that we have not implement real package
+;; assume that it was implemented
+(define (project-complex x)
+  (make-real (real-part x)))
 
-(define (drop-rational-number x)
-  (define (project x)
-    (make-scheme-number (round (/ (numer x) (denom x)))))
+(define (install-project)
+  (put 'project '(rational) project-rational)
+  (put 'project '(real) project-real)
+  (put 'project '(complex) project-complex)
+  'done)
+
+(define (projectt x)
+  (apply-generic 'project x))
+
+;; install drop
+(define (drop-scheme-number x)
+  x)
+
+(define (drop-rational x)
   (let ((a (project x)))
     (if (equ? (raise a) x)
-	(drop a)
+	a
 	x)))
 
-(define (drop-real-number x)
-  (define (project x)
-    (make-scheme-number (round x)))
+(define (drop-real x)
   (let ((a (project x)))
     (if (equ? (raise (raise a)) x)
-	(drop a)
+	a
 	x)))
 
-(define (drop-complex-number x)
-  (define (project x)
-    (make-real (real-part x)))
+(define (drop-complex x)
   (let ((a (project x)))
     (if (equ? (raise a) x)
 	(drop a)
-	x)))				;most details of these four drop-xxx procedures could be implemented in drop procedur
+	x)))	
 
 (define (install-drop)
-  (put 'drop 'scheme-number drop-scheme-number)
-  (put 'drop 'rational drop-rational-number)
-  (put 'drop 'real drop-real-number)
-  (put 'drop 'complex drop-complex-number)
+  (put 'drop '(scheme-number) drop-scheme-number)
+  (put 'drop '(rational) drop-rational)
+  (put 'drop '(real) drop-real)
+  (put 'drop '(complex) drop-complex)
   'done)
 
 (define (drop n)
-  (let ((tag (type-tag n)))
-    (apply-generic 'drop n)))
+  (apply-generic 'drop n))
 
 
 (define (apply-generic op . args)
@@ -42,7 +55,7 @@
     (let ((proc (get op type-tags)))
       (if proc	      
 	  (let ((res (apply proc (map contents args))))
-	    (if (or (eq? op 'raise) (eq? op 'equ?))
+	    (if (or (eq? op 'raise) (eq? op 'equ?) (eq? op 'drop))
 		res
 		(drop res)))
 	  (if (= (length args) 2)
