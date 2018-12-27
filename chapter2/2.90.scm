@@ -1,17 +1,37 @@
-;; common procedures for two types of terms
-
-;; the-empty-termlist
-;; rest-terms
-;; empy-termlist?
-;; make-term
-;; coeff
-;; order
+;; install common polynomial term package
+(define (install-poly-term-package)
+  ;; procedures kept same
+  (define (make-term order coeff) (list order coeff))
+  (define (order term) (car term))
+  (define (coeff term) (cadr term))
+  ;; tag
+  (define (tag term)
+    (attach-tag 'polynomial-term term))
+  ;; put
+  (put 'make 'polynomial-term
+       (lambda (x y) (tag (make-term x y))))
+  (put 'order '(polynomial-term) order)
+  (put 'coeff '(polynomial-term) coeff)
+  )
+(define (make-term x y)
+  ((get 'make 'polynomial-term) x y))
+(define (order x)
+  (apply-generic 'order x))
+(define (coeff x)
+  (apply-generic 'coeff x))
 
 (define (install-dense-terms-package)
   ;; procedures about dense terms...
-  ;; procedure rest-terms? and so on, define and put
+  
+  ;; prcedures kept same:
+  ;; rest-terms
+  ;; empy-termlist?
+  
+  ;; and delete procedure the-empty-termlist;
+  ;; replace call of the-empty-termlist with
+  ;; 'L1' or 'L' in 'mul-term' & 'mul-term-by-all-terms'
   (define (tag terms)
-    (attach-tag 'dense terms))
+    (attach-tag 'polynomial-dense terms))
   (define (first-term term-list)
     (make-term (- (len term-list) 1) (car term-list)))
   (define (adjoin-term term term-list)
@@ -26,24 +46,31 @@
 	(let ((first (car terms)))
 	  (const (negative first)
 		 negative-t (rest-terms terms))))
-    (put 'make 'dense
-	 (lambda (x) (tag x)))
-    (put 'negative '(dense)
+    (put 'negative '(polynomial-dense)
 	 (lambda (x) (tag (negative x))))
-    (put 'first-term '(dense)
+    (put 'first-term '(polynomial-dense)
 	 (lambda (x) (first-term x)))
-    (put 'adjoin-term 'dense
+    (put 'empty-termlist? '(polynomial-dense) empty-termlist?)
+    (put 'rest-terms '(polynomial-dense)
+	 (lambda (x) (tag (rest-terms x))))
+    (put 'adjoin-term 'polynomial-dense
 	 (lambda (x y) (tag (adjoin-term x y))))))
-
-(define (make-dense-terms terms)
-  ((get 'make 'dense terms) terms))
 
 
 (define (install-sparse-terms-package)
   ;; procedures about sparse terms...
+
   ;; procedure rest-terms? and so on, define and put
+  ;; prcedures kept same:
+  ;; rest-terms
+  ;; empy-termlist?
+  
+  ;; and delete procedure the-empty-termlist;
+  ;; replace call of the-empty-termlist with
+  ;; 'L1' or 'L' in 'mul-term' & 'mul-term-by-all-terms'
+
   (define (tag terms)
-    (attach-tag 'sparse terms))
+    (attach-tag 'polynomial-sparse terms))
   (define (first-term term-list) (car term-list))
   (define (adjoin-term term term-list)
     (if (=zero? (coeff term))
@@ -57,17 +84,15 @@
 			(order first)
 			(negative (coeff first)))
 		       (negative-t (rest-terms terms))))))
-  (put 'make 'sparse
-       (lambda (x) (tag x)))
-  (put 'negative '(sparse)
+  (put 'negative '(polynomial-sparse)
        (lambda (x) (tag (negative-t x))))
-  (put 'first-term '(sparse)
+  (put 'first-term '(polynomial-sparse)
        (lambda (x) (first-term x)))
-  (put 'adjoin-term 'sparse
+  (put 'empty-termlist? '(polynomial-sparse) empty-termlist?)
+  (put 'rest-terms '(polynomial-sparse)
+       (lambda (x) (tag (rest-terms x))))
+  (put 'adjoin-term 'polynomial-sparse
        (lambda (x y) (tag (adjoin-term x y)))))
-
-(define (make-sparse-terms terms)
-  ((get 'make 'sparse) terms))
 
 
 (define (first-term x)
@@ -79,16 +104,25 @@
 (define (negative x)
   (apply-generic 'negative x))
 
-;; add-terms
-;; mul-terms
-;; sub-terms
-;; add-poly
-;; mul-poly
-;; sub-poly
+(define (empty-termlist? x)
+  (apply-generic 'empty-termlist x))
+
+(define (rest-terms x)
+  (apply-generic 'rest-terms x))
+
 
 (define (install-polynomial-package)
   ;; internal procedures...
+  
+  ;; replace call of procedure the-empty-termlist with
+  ;; 'L1' or 'L' in 'mul-term' & 'mul-term-by-all-terms'
+  ;; add-terms
+  ;; mul-terms
+  ;; sub-terms
+
+  ;; others kept same
+
   (put 'sub '(poly poly)
-       (lambda (x y) (tag 'poly (sub-poly x y)))) ;2.88
+       (lambda (x y) (tag 'polynomial (sub-poly x y)))) ;2.88
   ;; others kept unchanged
   )
