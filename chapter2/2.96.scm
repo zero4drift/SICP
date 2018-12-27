@@ -21,8 +21,7 @@
       (gcd-terms b (pseudoremainder-terms a b))))
 
 ;; b
-(define (gcd-terms a b)
-  (define (gcd-terms-coeff terms)
+(define (gcd-terms-coeff terms)
     (let ((coeffs (map (lambda (t) (coeff t)) terms)))
       (define (recursive coeffs)
 	(if (null? (cddr coeffs))
@@ -33,7 +32,8 @@
 	     (car coeffs)
 	     (recursive coeffs))))
       (recursive coeffs)))
-  
+
+(define (gcd-terms a b)
   (if (empty-termlist? b)
       (let ((coeffs-gcd (gcd-terms-coeff a)))
 	(div-terms

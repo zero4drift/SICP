@@ -1,65 +1,55 @@
+;; (load "./2.96.scm")
 ;; a
 
-(define (gcd-terms-coeff terms)
-  (let ((coeffs (map (lambda (t) (coeff t)) terms)))
-    (define (recursive coeffs)
-      (if (null? (cddr coeffs))
-	  (greatest-common-divisor
-	   (car coeffs)
-	   (cadr coeffs))
-	  (greatest-common-divisor
-	   (car coeffs)
-	   (recursive coeffs))))
-    (recursive coeffs)))
-
-(define (simplify terms)
-  (let ((g (gcd-terms-coeff terms)))
-    (div-terms
-     terms
-     (list (make-term 0 g)))))
-
 (define (reduce-terms n d)
-  (list (simplify n) (simplify d)))	;the requirement statements in the book of chinese verson is vague
-;; so I just make the first answer like this to keep it different from the sencond
+  (define (compute-constant a b c)
+    (let ((af (first-term a))
+	  (bf (first-term b))
+	  (cf (first-term c)))
+      (let ((c (coeff af))
+	    (o1 (max (order bf) (order cf)))
+	    (o2 (order af)))
+	(expt c (+ 1 o1 (- o2))))))
+  (define (simplify a b)
+    (let ((g (gcd-terms-coeff (append a b))))
+      (let ((sa (car (div-terms a (list (make-term 0 g)))))
+	    (sb (car (div-terms b (list (make-term 0 g))))))
+	(list sa sb))))
+  (let ((g (gcd-terms n d)))
+    (let ((constant (compute-constant g n d)))
+      (let ((mn (mul-term-by-all-terms (make-term 0 constant) n))
+	    (md (mul-term-by-all-terms (make-term 0 constant) d)))
+	(let ((gn (car (div-terms mn g)))
+	      (gd (car (div-terms md g))))
+	  (simplify gn gd))))))	
 
 (define (reduce-poly p1 p2)
-  (let ((v1 (variable p1))
-	(v2 (variable p2))
-	(t1 (term-list p1))
-	(t2 (term-list p2)))
-    (let ((result (reduce-terms n d)))
-      (if (same-vaiable? v1 v2)
-	  (list (make-poly v1 (car result))
-		(make-poly v1 (cadr result)))
-	  (error "Polys not in same variable -- REDUCE-POLY"
-		 (list p1 p2))))))
+  (if (same-vaiable? (variable p1) (variable p2))
+      (let ((t1 (term-list p1))
+	    (t2 (term-list p2)))
+	(let ((result (reduce-terms t1 t2)))
+	  (list (make-poly (variable p1) (car result))
+		(make-poly (variable p1) (cadr result)))))
+      (error "Polys not in same variable -- REDUCE-POLY"
+	     (list p1 p2))))
 
 ;; b
 
-(define (reduce-terms-like n d)
-  (let ((g (gcd-terms n d)))
-    (list (div-terms n g) (div-terms d g))))
-
-(define (reduce-poly p1 p2)
-  (let ((v1 (variable p1))
-	(v2 (variable p2))
-	(t1 (term-list p1))
-	(t2 (term-list p2)))
-    (let ((result (reduce-terms-like n d)))
-      (if (same-vaiable? v1 v2)
-	  (list (make-poly v1 (car result))
-		(make-poly v1 (cadr result)))
-	  (error "Polys not in same variable -- REDUCE-POLY"
-		 (list p1 p2))))))
+;; inside procedure install-scheme-number-package
 (define (reduce-integers n d)
   (let ((g (gcd n d)))
     (list (/ n g) (/ d g))))
-
 (put 'reduce '(scheme-number scheme-number)
-     reduce-integers)
+     (lambda (n d) (map tag (reduce-integers n d))))
 
+;; inside procedure install-polynomial-package
 (put 'reduce '(polynomial polynomial)
-     reduce-poly)
+     (lambda (n d) (map tag (reduce-poly n d))))
+
+;; inside procedure install-rational-package
+(define (make-rat n d)
+  (let ((simple (reduce n d)))
+    (cons (car simple) (cadr simple))))
 
 (define (reduce n d)
   (apply-generic 'reduce n d))
