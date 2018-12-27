@@ -15,15 +15,13 @@
 				    (car rest-of-result))
 		      (cadr rest-of-result))))))))
 
+;; the remainder of result of div-terms should be deprecated in div-poly
 (define (div-poly p1 p2)
   (if (same-variable? (variable p1) (variable p2))
       (let ((t1 (term-list p1))
 	    (t2 (term-list p2)))
 	(let ((result (div-terms t1 t2)))
-	  (list
-	   (make-poly (variable p1)
-		      (car result))
-	   (make-poly (variable p1)
-		      (cadr result)))))
+	  (make-poly (variable p1)
+		     (car result))))
       (error "Polys not in same var -- DIV-POLY"
 	     (list p1 p2))))
