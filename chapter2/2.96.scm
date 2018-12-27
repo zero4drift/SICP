@@ -1,3 +1,5 @@
+;; only for polynomial with integer coeffs.
+
 ;; a
 (define (pseudoremainder-terms a b)
   (let ((f1 (first-term a))
@@ -9,7 +11,7 @@
 	(let ((term (make-term 0
 			       constant)))
 	  (cadr (div-terms
-		 (mul-terms a term)
+		 (mul-term-by-all-terms term a)
 		 b)))))))
 	       
 
