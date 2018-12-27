@@ -47,7 +47,7 @@
 	  (const (negative first)
 		 negative-t (rest-terms terms))))
     (put 'negative '(polynomial-dense)
-	 (lambda (x) (tag (negative x))))
+	 (lambda (x) (tag (negative-t x))))
     (put 'first-term '(polynomial-dense)
 	 (lambda (x) (first-term x)))
     (put 'empty-termlist? '(polynomial-dense) empty-termlist?)
@@ -124,5 +124,5 @@
 
   (put 'sub '(poly poly)
        (lambda (x y) (tag 'polynomial (sub-poly x y)))) ;2.88
-  ;; others kept unchanged
+  ;; and so on.
   )
