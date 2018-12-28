@@ -437,23 +437,36 @@
            (make-term (add (order t1) (order t2))
                       (mul (coeff t1) (coeff t2)))
            (mul-term-by-all-terms t1 (rest-terms L))))))
+  ;; follow ex 2.87
+  (define (=zero?-p p)
+    (define (recursive terms)
+      (if (empty-termlist? terms)
+	  #t
+	  (let ((first (first-term terms))
+		(rest (rest-terms terms)))
+	    (if (=zero? (coeff first))
+		(recursive rest)
+		#f))))
+    (recursive (term-list p)))
+  (put '=zero? '(polynomial) =zero?-p)
+  ;; 2.87
 
   ;; poly
   (define (add-poly p1 p2)
     (if (same-variable? (variable p1) (variable p2))
-        (make-poly (variable p1)
+	(make-poly (variable p1)
                    (add-terms (term-list p1)
                               (term-list p2)))
 	(error "Polys not in same var -- ADD-POLY"
 	       (list p1 p2))))
   (define (mul-poly p1 p2)
     (if (same-variable? (variable p1) (variable p2))
-        (make-poly (variable p1)
+	(make-poly (variable p1)
                    (mul-terms (term-list p1)
 			      (term-list p2)))
 	(error "Polys not in same var -- MUL-POLY"
 	       (list p1 p2))))
-  
+
   ;; interface to rest of the system
   (define (tag p) (attach-tag 'polynomial p))
   (put 'add '(polynomial polynomial)
