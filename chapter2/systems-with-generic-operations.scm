@@ -123,6 +123,10 @@
 (define (arctan x) (apply-generic 'arctan x))
 (define (exp x y) (apply-generic 'exp x y))
 ;; 2.86
+;; follow ex 2.87
+(define (negative n)
+  (apply-generic 'negative n))
+;; 2.87
 
 
 ;; helper functions
@@ -170,6 +174,12 @@
   (put 'arctan '(scheme-number scheme-number) (lambda (y x) (tag (atan y x))))
   (put 'exp '(scheme-number scheme-number) (lambda (x y) (tag (expt x y))))
   ;; 2.86
+  ;; follow 2.88
+  (define (negative-scheme-number n)
+    (make-scheme-number (- n)))
+  (put 'negative '(scheme-number) negative-scheme-number)
+  ;; 2.88
+
   'done)
 
 (define (make-scheme-number n)
@@ -226,6 +236,11 @@
 	  x)))
   (put 'drop '(rational) drop-rational)
   ;; 2.85
+  ;; follow 2.88
+  (define (negative-rational n)
+    (make-rational (negative (numer n)) (denom n)))
+  (put 'negative '(rational) negative-rational)
+  ;; 2.88
   
   ;; interface to rest of the system
   (define (tag x) (attach-tag 'rational x))
@@ -307,6 +322,11 @@
   ;; 	  x)))	
   ;; (put 'drop '(complex) drop-complex)
   ;; 2.85
+  ;; follow ex 2.88
+  (define (negative-complex n)
+    (make-complex-from-real-imag (negative (real-part n)) (negative (imag-part n))))
+  (put 'negative '(complex) negative-complex)
+  ;; 2.88
 
   ;; interface to rest of the system
   (define (tag z) (attach-tag 'complex z))
@@ -450,8 +470,25 @@
     (recursive (term-list p)))
   (put '=zero? '(polynomial) =zero?-p)
   ;; 2.87
-
+  
   ;; poly
+  ;; follow 2.88
+  (define (negative-poly n)
+    (define (recursive-t terms)
+      (if (empty-termlist? terms)
+	  terms
+	  (let ((first (first-term terms)))
+	    (adjoin-term (make-term
+			  (order first)
+			  (negative (coeff first)))
+			 (recursive-t (rest-terms terms))))))
+    (make-poly (variable n) (recursive-t (term-list n))))
+  (put 'negative '(polynomial) negative-poly)
+  (define (sub-poly p1 p2)
+    (add-poly p1 (negative-poly p2)))
+  (put 'sub '(polynomial polynomial)
+       (lambda (x y) (tag (sub-poly x y))))
+  ;; 2.88
   (define (add-poly p1 p2)
     (if (same-variable? (variable p1) (variable p2))
 	(make-poly (variable p1)
