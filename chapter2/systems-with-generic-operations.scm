@@ -28,6 +28,42 @@
 ;; 2.78
 
 ;; follow 2.81
+;; (define (apply-generic op . args)
+;;   (let ((type-tags (map type-tag args)))
+;;     (let ((proc (get op type-tags)))
+;;       (if proc
+;; 	  (apply proc (map contents args))
+;; 	  (if (= (length args) 2)
+;; 	      (let ((type1 (car type-tags))
+;; 		    (type2 (cadr type-tags))
+;; 		    (a1 (car args))
+;; 		    (a2 (cadr args)))
+;; 		(if(equal? type1 type2)
+;; 		   (error "No method for these types"
+;; 			  (list op type-tags))
+;; 		   (let ((t1->t2 (get-coercion type1 type2))
+;; 			 (t2->t1 (get-coercion type2 type1)))
+;; 		     (cond (t1->t2
+;; 			    (apply-generic op (t1->t2 a1) a2))
+;; 			   (t2->t1
+;; 			    (apply-generic op a1 (t2->t1 a2)))
+;; 			   (else
+;; 			    (error "No method for these types"
+;; 				   (list op type-tags))))))
+;; 		(error "No method for these types"
+;; 		       (list op type-tags))))))))
+;; 2.81
+
+;; follow ex 2.84
+;; types-tower
+(define (install-types-tower)
+  (put 'level 'scheme-number 1)
+  (put 'level 'rational 2)
+  ;; real package is not implemented
+  (put 'level 'real 3)
+  (put 'level 'complex 4)
+  'done)
+
 (define (apply-generic op . args)
   (let ((type-tags (map type-tag args)))
     (let ((proc (get op type-tags)))
@@ -38,21 +74,15 @@
 		    (type2 (cadr type-tags))
 		    (a1 (car args))
 		    (a2 (cadr args)))
-		(if(equal? type1 type2)
-		   (error "No method for these types"
-			  (list op type-tags))
-		   (let ((t1->t2 (get-coercion type1 type2))
-			 (t2->t1 (get-coercion type2 type1)))
-		     (cond (t1->t2
-			    (apply-generic op (t1->t2 a1) a2))
-			   (t2->t1
-			    (apply-generic op a1 (t2->t1 a2)))
-			   (else
-			    (error "No method for these types"
-				   (list op type-tags))))))
-		(error "No method for these types"
-		       (list op type-tags))))))))
-;; 2.81
+		(cond ((equal? type1 type2)
+		       (error "No method for these types"
+			      (list op type-tags)))
+		      ((< (level a1) (level a2))
+		       (apply-generic op (raise a1) a2))
+		      (else (apply-generic op a1 (raise a2)))))
+	      (error "No method for these types"
+		     (list op type-tags)))))))
+;; 2.84
 
 (define (add x y) (apply-generic 'add x y))
 (define (sub x y) (apply-generic 'sub x y))
@@ -64,6 +94,12 @@
 ;; follow ex 2.80
 (define (=zero? x) (apply-generic '=zero? x))
 ;; 2.80
+;; follow 2.83
+(define (raise number) (apply-generic 'raise number))
+;; 2.83
+;; follow 2.84
+(define (level x) (get 'level (type-tag x)))
+;; 2.84
 
 
 ;; helper functions
@@ -87,6 +123,11 @@
   (define (=zero-number? n) (= n 0))
   (put '=zero? '(scheme-number) =zero-number?)
   ;; 2.80
+  ;; follow 2.83
+  (define (scheme-number->rational number)
+    (make-rational number 1))
+  (put 'raise '(scheme-number) scheme-number->rational)
+  ;; 2.83
   (put 'add '(scheme-number scheme-number)
        (lambda (x y) (tag (+ x y))))
   (put 'sub '(scheme-number scheme-number)
@@ -100,7 +141,7 @@
   'done)
 
 (define (make-number n)
-  ((get 'make 'scheme-number) n))  
+  ((get 'make 'scheme-number) n))
 
 ;; rational package
 (define (install-rational-package)
@@ -136,6 +177,12 @@
     (= (numer r) 0))
   (put '=zero? '(rational) =zero-rational?)
   ;; 2.80
+  ;; follow 2.83
+  ;; note that we do not implement a real package
+  ;; (define (rational->real number)
+  ;;   (make-real (/ (numer number) (denom number))))
+  ;; (put 'raise '(rational) rational->real)
+  ;; 2.83
   
   ;; interface to rest of the system
   (define (tag x) (attach-tag 'rational x))
@@ -272,6 +319,7 @@
 
 
 ;; install
+(install-types-tower)
 (install-scheme-number-package)
 (install-rational-package)
 (install-rectangular-package)
