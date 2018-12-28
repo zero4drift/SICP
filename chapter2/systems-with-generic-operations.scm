@@ -72,8 +72,8 @@
 	  ;; follow 2.85
 	  (let ((res (apply proc (map contents args))))
 	    (if (or (eq? op 'raise) (eq? op 'equ?) (eq? op '=zero?))
-		res
-		(drop res)))
+	  	res
+	  	(drop res)))
 	  ;; 2.85
 	  ;; (apply proc (map contents args))
 	  (if (= (length args) 2)
@@ -117,12 +117,17 @@
 	    (drop a)
 	    x))))
 ;; 2.85
+;; follow ex 2.86
+(define (sine x) (apply-generic 'sine x))
+(define (cosine x) (apply-generic 'cosine x))
+(define (arctan x) (apply-generic 'arctan x))
+(define (exp x y) (apply-generic 'exp x y))
+;; 2.86
 
 
 ;; helper functions
-;; square
 (define (square x) (mul x x))
-;; built-in sqrt
+(define (sqr x) (exp x 0.5))
 ;; built-in gcd
 
 
@@ -159,6 +164,12 @@
        (lambda (x y) (tag (/ x y))))
   (put 'make 'scheme-number
        (lambda (x) (tag x)))
+  ;; follow ex 2.86
+  (put 'sine '(scheme-number) (lambda (x) (tag (sin x))))
+  (put 'cosine '(scheme-number) (lambda (x) (tag (cos x))))
+  (put 'arctan '(scheme-number scheme-number) (lambda (y x) (tag (atan y x))))
+  (put 'exp '(scheme-number scheme-number) (lambda (x y) (tag (expt x y))))
+  ;; 2.86
   'done)
 
 (define (make-scheme-number n)
@@ -228,6 +239,21 @@
        (lambda (x y) (tag (div-rat x y))))
   (put 'make 'rational
        (lambda (n d) (tag (make-rat n d))))
+  ;; follow ex 2.86
+  ;; assume that there is a way of computing numer and denom from real number(*.*)
+  ;; calls get_numer_denom, which returns a numer-denom pair
+  ;; Alternative:
+  ;; if not strictly stricted, sine/cosine/arctan/exp of rational could return scheme number;
+  ;; just replace (tag (get_numer_denom)) with (make-scheme-number)
+  ;; (put 'sine '(rational) (lambda (x) (tag (get_numer_denom (sine (/ (numer x) (denom x)))))))
+  ;; (put 'cosine '(rational) (lambda (x) (tag (get_numer_denom (cosine (/  (numer x) (denom x)))))))
+  ;; (put 'arctan '(rational rational)
+  ;;      (lambda (y x) (tag (get_numer_denom
+  ;; 		      (arctan (/ (numer y) (denom x)) (/ (numer x) (denom x)))))))
+  ;; (put 'exp '(rational rational)
+  ;;      (lambda (x y) (tag (get_numer_denom
+  ;; 		      (exp (/ (numer x) (denom x)) (/ (numer y) (denom y)))))))
+  ;; 2.86
   'done)
 
 (define (make-rational n d)
@@ -305,12 +331,12 @@
   (define (imag-part z) (cdr z))
   (define (make-from-real-imag x y) (cons x y))
   (define (magnitude z)
-    (sqrt (add (square (real-part z))
+    (sqr (add (square (real-part z))
 	       (square (imag-part z)))))
   (define (angle z)
     (atan (imag-part z) (real-part z)))
   (define (make-from-mag-ang r a)
-    (cons (mul r (cos a)) (mul r (sin a))))
+    (cons (mul r (cosine a)) (mul r (sine a))))
   
   ;; interface to the rest of the system
   (define (tag x) (attach-tag 'rectangular x))
@@ -331,12 +357,12 @@
   (define (angle z) (cdr z))
   (define (make-from-mag-ang r a) (cons r a))
   (define (real-part z)
-    (mul (magnitude z) (cos (angle z))))
+    (mul (magnitude z) (cosine (angle z))))
   (define (imag-part z)
-    (mul (magnitude z) (sin (angle z))))
+    (mul (magnitude z) (sine (angle z))))
   (define (make-from-real-imag x y)
-    (cons (sqrt (add (square x) (square y)))
-          (atan y x)))
+    (cons (sqr (add (square x) (square y)))
+          (arctan y x)))
   ;; interface to the rest of the system
   (define (tag x) (attach-tag 'polar x))
   (put 'real-part '(polar) real-part)
