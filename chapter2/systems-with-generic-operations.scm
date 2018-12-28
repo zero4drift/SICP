@@ -4,8 +4,11 @@
 (define tb (make-table equal?))
 (define get (tb 'lookup-proc))
 (define put (tb 'insert-proc!))
+;; table done
 
 ;; overall general procedures
+
+;; follow ex 2.78
 (define (attach-tag type-tag contents)
   (if (number? contents)
       contents
@@ -22,6 +25,7 @@
 	((pair? datum) (cdr datum))
 	(else
 	 (error "Bad tagged datum -- CONTENTS" datum))))
+;; 2.78
 
 (define (apply-generic op . args)
   (let ((type-tags (map type-tag args)))
@@ -36,6 +40,9 @@
 (define (sub x y) (apply-generic 'sub x y))
 (define (mul x y) (apply-generic 'mul x y))
 (define (div x y) (apply-generic 'div x y))
+;; follow ex 2.79
+(define (equ? x y)(apply-generic 'equ? x y))
+;; 2.79
 
 
 ;; helper functions
@@ -49,6 +56,12 @@
 (define (install-scheme-number-package)
   (define (tag x)
     (attach-tag 'scheme-number x))
+
+  ;; follow ex 2.79
+  (define (equ-number? n1 n2)
+    (= n1 n2))
+  (put 'equ? '(scheme-number scheme-number) equ-number?)
+  ;; 2,79
   (put 'add '(scheme-number scheme-number)
        (lambda (x y) (tag (+ x y))))
   (put 'sub '(scheme-number scheme-number)
@@ -86,6 +99,13 @@
   (define (div-rat x y)
     (make-rat (mul (numer x) (denom y))
               (mul (denom x) (numer y))))
+  ;; follow ex 2.79
+  (define (equ-rational? r1 r2)
+    (let ((product1 (* (numer r1) (denom r2)))
+	  (product2 (* (denom r1) (numer r2))))
+      (= product1 product2)))
+  (put 'equ? '(rational rational) equ-rational?)
+  ;; 2.79
   
   ;; interface to rest of the system
   (define (tag x) (attach-tag 'rational x))
@@ -99,8 +119,7 @@
        (lambda (x y) (tag (div-rat x y))))
   (put 'make 'rational
        (lambda (n d) (tag (make-rat n d))))
-  'done
-  )
+  'done)
 
 (define (make-rational n d)
   ((get 'make 'rational) n d))
@@ -122,10 +141,19 @@
                          (sub (imag-part z1) (imag-part z2))))
   (define (mul-complex z1 z2)
     (make-from-mag-ang (mul (magnitude z1) (magnitude z2))
-                       (add (angle z1) (angle z2))))
+		       (add (angle z1) (angle z2))))
   (define (div-complex z1 z2)
     (make-from-mag-ang (div (magnitude z1) (magnitude z2))
-                       (sub (angle z1) (angle z2))))
+		       (sub (angle z1) (angle z2))))
+  ;; follow ex 2.79
+  (define (equ-complex? c1 c2)
+    (let ((real1 (real-part c1))
+	  (imag1 (imag-part c1))
+	  (real2 (real-part c2))
+	  (imag2 (imag-part c2)))
+      (and (= real1 real2) (= imag1 imag2))))
+  (put 'equ? '(complex complex) equ-complex?)
+  ;; 2.79
 
   ;; interface to rest of the system
   (define (tag z) (attach-tag 'complex z))
@@ -141,8 +169,7 @@
        (lambda (x y) (tag (make-from-real-imag x y))))
   (put 'make-from-mag-ang 'complex
        (lambda (r a) (tag (make-from-mag-ang r a))))  
-  'done
-  )
+  'done)
 
 ;; rectangular-package for complex package
 (define (install-rectangular-package)
@@ -152,7 +179,7 @@
   (define (make-from-real-imag x y) (cons x y))
   (define (magnitude z)
     (sqrt (add (square (real-part z))
-               (square (imag-part z)))))
+	       (square (imag-part z)))))
   (define (angle z)
     (atan (imag-part z) (real-part z)))
   (define (make-from-mag-ang r a)
