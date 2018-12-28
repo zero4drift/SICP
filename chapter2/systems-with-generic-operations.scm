@@ -43,6 +43,9 @@
 ;; follow ex 2.79
 (define (equ? x y)(apply-generic 'equ? x y))
 ;; 2.79
+;; follow ex 2.80
+(define (=zero? x) (apply-generic '=zero? x))
+;; 2.80
 
 
 ;; helper functions
@@ -62,6 +65,10 @@
     (= n1 n2))
   (put 'equ? '(scheme-number scheme-number) equ-number?)
   ;; 2,79
+  ;; follow ex 2.80
+  (define (=zero-number? n) (= n 0))
+  (put '=zero? '(scheme-number) =zero-number?)
+  ;; 2.80
   (put 'add '(scheme-number scheme-number)
        (lambda (x y) (tag (+ x y))))
   (put 'sub '(scheme-number scheme-number)
@@ -106,6 +113,11 @@
       (= product1 product2)))
   (put 'equ? '(rational rational) equ-rational?)
   ;; 2.79
+  ;; follow ex 2.80
+  (define (=zero-rational? r)
+    (= (numer r) 0))
+  (put '=zero? '(rational) =zero-rational?)
+  ;; 2.80
   
   ;; interface to rest of the system
   (define (tag x) (attach-tag 'rational x))
@@ -154,6 +166,13 @@
       (and (= real1 real2) (= imag1 imag2))))
   (put 'equ? '(complex complex) equ-complex?)
   ;; 2.79
+  ;; follow ex 2.80
+  (define (=zero-complex? c)
+    (let ((real (real-part c))
+	  (imag (imag-part c)))
+      (and (= real 0) (= imag 0))))
+  (put '=zero? '(complex) =zero-complex?)
+  ;; 2.80
 
   ;; interface to rest of the system
   (define (tag z) (attach-tag 'complex z))
