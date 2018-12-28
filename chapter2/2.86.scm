@@ -10,17 +10,21 @@
 (put 'arctan '(scheme-number scheme-number) (lambda (y x) (tag (atan y x))))
 (put 'exp '(scheme-number scheme-number) (lambda (x y) (tag (expt x y))))
 
- ;;; add into rational package inside install-rational-package procedure
 ;; assume that there is a way of computing numer and denom from real number(*.*)
 ;; calls get_numer_denom, which returns a numer-denom pair
-(put 'sine '(rational) (lambda (x) (tag (get_numer_denom (sin (/ (numer x) (denom x)))))))
-(put 'cosine '(rational) (lambda (x) (tag (get_numer_denom (cos (/  (numer x) (denom x)))))))
-(put 'arctan '(rational rational)
-     (lambda (y x) (tag (get_numer_denom
-		    (atan (/ (numer y) (denom x)) (/ (numer x) (denom x)))))))
-(put 'exp '(rational rational)
-     (lambda (x y) (tag (get_numer_denom
-		    (expt (/ (numer x) (denom x)) (/ (numer y) (denom y)))))))
+
+;; Alternative:
+;; if not strictly stricted, sine/cosine/arctan/exp of rational could return scheme number;
+;; just replace (tag (get_numer_denom)) with (make-scheme-number)
+
+;; (put 'sine '(rational) (lambda (x) (tag (get_numer_denom (sine (/ (numer x) (denom x)))))))
+;; (put 'cosine '(rational) (lambda (x) (tag (get_numer_denom (cosine (/  (numer x) (denom x)))))))
+;; (put 'arctan '(rational rational)
+;;      (lambda (y x) (tag (get_numer_denom
+;; 		      (arctan (/ (numer y) (denom x)) (/ (numer x) (denom x)))))))
+;; (put 'exp '(rational rational)
+;;      (lambda (x y) (tag (get_numer_denom
+;; 		      (expt (/ (numer x) (denom x)) (/ (numer y) (denom y)))))))
 
  ;;; complex-rect package
 (define (square x) (mul x x))
