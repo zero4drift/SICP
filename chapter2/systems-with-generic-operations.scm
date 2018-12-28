@@ -54,6 +54,7 @@
 ;; 		       (list op type-tags))))))))
 ;; 2.81
 
+
 ;; follow ex 2.84
 ;; types-tower
 (define (install-types-tower)
@@ -68,7 +69,13 @@
   (let ((type-tags (map type-tag args)))
     (let ((proc (get op type-tags)))
       (if proc
-	  (apply proc (map contents args))
+	  ;; follow 2.85
+	  (let ((res (apply proc (map contents args))))
+	    (if (or (eq? op 'raise) (eq? op 'equ?) (eq? op '=zero?))
+		res
+		(drop res)))
+	  ;; 2.85
+	  ;; (apply proc (map contents args))
 	  (if (= (length args) 2)
 	      (let ((type1 (car type-tags))
 		    (type2 (cadr type-tags))
@@ -100,6 +107,16 @@
 ;; follow 2.84
 (define (level x) (get 'level (type-tag x)))
 ;; 2.84
+;; follow ex 2.85
+(define (project x) (apply-generic 'project x))
+(define (drop x)
+  (if (number? x)
+      x
+      (let ((a (project x)))
+	(if (equ? (raise a) x)
+	    (drop a)
+	    x))))
+;; 2.85
 
 
 ;; helper functions
@@ -128,6 +145,10 @@
     (make-rational number 1))
   (put 'raise '(scheme-number) scheme-number->rational)
   ;; 2.83
+  ;; follow 2.85
+  (define (drop-scheme-number x) x)
+  (put 'drop '(scheme-number) drop-scheme-number)
+  ;; 2.85
   (put 'add '(scheme-number scheme-number)
        (lambda (x y) (tag (+ x y))))
   (put 'sub '(scheme-number scheme-number)
@@ -140,7 +161,7 @@
        (lambda (x) (tag x)))
   'done)
 
-(define (make-number n)
+(define (make-scheme-number n)
   ((get 'make 'scheme-number) n))
 
 ;; rational package
@@ -183,6 +204,17 @@
   ;;   (make-real (/ (numer number) (denom number))))
   ;; (put 'raise '(rational) rational->real)
   ;; 2.83
+  ;; follow 2.85
+  (define (project-rational x)
+    (make-scheme-number (round (/ (numer x) (denom x)))))
+  (put 'project '(rational) project-rational)
+  (define (drop-rational x)
+    (let ((a (project x)))
+      (if (equ? (raise a) x)
+	  a
+	  x)))
+  (put 'drop '(rational) drop-rational)
+  ;; 2.85
   
   ;; interface to rest of the system
   (define (tag x) (attach-tag 'rational x))
@@ -238,6 +270,17 @@
       (and (= real 0) (= imag 0))))
   (put '=zero? '(complex) =zero-complex?)
   ;; 2.80
+  ;; follow ex 2.85
+  ;; need real package
+  ;; (define (project-complex x) (make-real (real-part x)))
+  ;; (put 'project '(complex) project-complex)
+  ;; (define (drop-complex x)
+  ;;   (let ((a (project x)))
+  ;;     (if (equ? (raise a) x)
+  ;; 	  (drop a)
+  ;; 	  x)))	
+  ;; (put 'drop '(complex) drop-complex)
+  ;; 2.85
 
   ;; interface to rest of the system
   (define (tag z) (attach-tag 'complex z))
