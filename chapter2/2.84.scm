@@ -26,7 +26,7 @@
 		(cond ((equal? type1 type2)
 		       (error "No method for these types"
 			      (list op type-tags)))
-		      ((lower-one t1 t2)
+		      ((lower-one type1 type2)
 		       (apply-generic op (raise a1) a2))
 		      (else (apply-generic op a1 (raise a2)))))
 	      (error "No method for these types"
