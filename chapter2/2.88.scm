@@ -11,7 +11,7 @@
   (define (negative-poly n)
     (define (recursive-t terms)
       (if (empty-termlist? terms)
-	  the-empty-termlist
+	  terms
 	  (let ((first (first-term terms)))
 	    (adjoin-term (make-term
 			  (order first)
@@ -28,7 +28,7 @@
   (apply-generic 'negative n))
 
 (define (sub-poly p1 p2)
-  (add-poly p1 (negative p2)))
+  (add-poly p1 (negative-poly p2)))
 
 ;; add this into install-polynomial-package
 (put 'sub '(polynomial polynomial)
