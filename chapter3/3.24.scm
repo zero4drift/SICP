@@ -6,8 +6,8 @@
 	    (let ((record (assoc key-2 (cdr subtable))))
 	      (if record
 		  (cdr record)
-		  false))
-	    false)))
+		  #f))
+	    #f)))
     (define (insert! key-1 key-2 value)
       (let ((subtable (assoc key-1 (cdr local-table))))
 	(if subtable
@@ -23,7 +23,7 @@
 			    (cdr local-table)))))
       'ok)
     (define (assoc key records)
-      (cond ((null? records) false)
+      (cond ((null? records) #f)
 	    ((same-key? key (caar records)) (car records))
 	    (else (assoc key (cdr records)))))
     (define (dispatch m)
