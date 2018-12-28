@@ -24,13 +24,13 @@
 ;; 		      (arctan (/ (numer y) (denom x)) (/ (numer x) (denom x)))))))
 ;; (put 'exp '(rational rational)
 ;;      (lambda (x y) (tag (get_numer_denom
-;; 		      (expt (/ (numer x) (denom x)) (/ (numer y) (denom y)))))))
+;; 		      (exp (/ (numer x) (denom x)) (/ (numer y) (denom y)))))))
 
  ;;; complex-rect package
 (define (square x) (mul x x))
-(define (sqrt x) (exp x 0.5))
+(define (sqr x) (exp x 0.5))
 (define (make-from-mag-ang r a) (cons (mul r (cosine a)) (mul r (sine a))))
-(define (magnitude z) (sqrt (add (square (real-part z)) (square (imag-part z)))))
+(define (magnitude z) (sqr (add (square (real-part z)) (square (imag-part z)))))
 (define (angle z) (arctan (imag-part z) (real-part z)))
 
  ;;; complex-polar package
