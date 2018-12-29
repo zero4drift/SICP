@@ -493,7 +493,7 @@
        (lambda (x y) (tag (adjoin-term-s x y))))
   (put 'make 'polynomial-sparse (lambda (t) (tag t)))
   'done)
-(define (make-sparse-terms . terms)
+(define (make-sparse-terms terms)
   ((get 'make 'polynomial-sparse) terms))
 
 (define (first-term x)
@@ -510,6 +510,9 @@
 
 (define (rest-terms x)
   (apply-generic 'rest-terms x))
+
+(define (make-empty-termlist t)
+  ((get 'make (type-tag t)) '()))
 ;; 2.89 & 2.90
 
 ;; polynomial-package
@@ -554,6 +557,27 @@
            (make-term (add (order t1) (order t2))
 		      (mul (coeff t1) (coeff t2)))
            (mul-term-by-all-terms t1 (rest-terms L))))))
+  ;; follow ex 2.91
+  (define (div-terms L1 L2)
+    (if (empty-termlist? L1)
+	(list L1 L1)
+	(let ((t1 (first-term L1))
+	      (t2 (first-term L2)))
+	  (if (> (order t2) (order t1))
+	      (list (make-empty-termlist L1) L1)
+	      (let ((new-c (div (coeff t1) (coeff t2)))
+		    (new-o (- (order t1) (order t2))))
+		(let ((rest-of-result
+		       (div-terms
+			(add-terms L1
+				   (negative (mul-term-by-all-terms
+					      (make-term new-o new-c)
+					      L2)))
+			L2)))
+		  (list (adjoin-term (make-term new-o new-c)
+				      (car rest-of-result))
+			(cadr rest-of-result))))))))
+  ;; 2.91
   ;; follow ex 2.87
   (define (=zero?-p p)
     (define (recursive terms)
@@ -593,6 +617,19 @@
 			      (term-list p2)))
 	(error "Polys not in same var -- MUL-POLY"
 	       (list p1 p2))))
+  ;; follow 2.91
+  (define (div-poly p1 p2)
+    (if (same-variable? (variable p1) (variable p2))
+	(let ((t1 (term-list p1))
+	      (t2 (term-list p2)))
+	  (let ((result (div-terms t1 t2)))
+	    (make-poly (variable p1)
+		       (car result))))
+	(error "Polys not in same var -- DIV-POLY"
+	       (list p1 p2))))
+  (put 'div '(polynomial polynomial)
+       (lambda (p1 p2) (tag (div-poly p1 p2))))
+  ;; 2.91
 
   ;; interface to rest of the system
   (define (tag p) (attach-tag 'polynomial p))
