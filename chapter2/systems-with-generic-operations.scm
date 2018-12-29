@@ -566,7 +566,7 @@
 	  (if (> (order t2) (order t1))
 	      (list (make-empty-termlist L1) L1)
 	      (let ((new-c (div (coeff t1) (coeff t2)))
-		    (new-o (- (order t1) (order t2))))
+		    (new-o (sub (order t1) (order t2))))
 		(let ((rest-of-result
 		       (div-terms
 			(add-terms L1
