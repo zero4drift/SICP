@@ -102,6 +102,9 @@
 (define (rest-terms x)
   (apply-generic 'rest-terms x))
 
+(define (make-empty-termlist t)
+  ((get 'make (type-tag t)) '()))
+
 
 (define (install-polynomial-package)
   ;; internal procedures...
