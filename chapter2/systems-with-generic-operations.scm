@@ -459,6 +459,13 @@
 	(let ((first (car terms)))
 	  (cons (negative first)
 		(negative-d (rest-terms-d terms))))))
+  ;; follow ex 2.96
+  (define (coeffs-d terms)
+    (cond ((empty-termlist-d? terms) '())
+	  ((equ? (car terms) 0) (coeffs-d (cdr terms)))
+	  (else (cons (car terms) (coeffs-d (cdr terms))))))
+  (put 'coeffs '(polynomial-dense) coeffs-d)
+  ;; 2.96
   (put 'negative '(polynomial-dense)
        (lambda (x) (tag (negative-d x))))
   (put 'first-term '(polynomial-dense)
@@ -493,6 +500,11 @@
 			  (order first)
 			  (negative (coeff first)))
 			 (negative-s (rest-terms-s terms))))))
+  ;; follow ex 2.96
+ (define (coeffs-s terms)
+    (map (lambda (t) (coeff t)) terms))
+  (put 'coeffs '(polynomial-sparse) coeffs-s)
+  ;; 2.96
   (put 'negative '(polynomial-sparse)
        (lambda (x) (tag (negative-s x))))
   (put 'first-term '(polynomial-sparse)
@@ -525,6 +537,10 @@
 (define (make-empty-termlist t)
   ((get 'make (type-tag t)) '()))
 ;; 2.89 & 2.90
+;; follow 2.96
+(define (coeffs t)
+  (apply-generic 'coeffs t))
+;; 2.96
 
 ;; polynomial-package
 (define (install-polynomial-package)
@@ -588,6 +604,38 @@
 		  (list (adjoin-term (make-term new-o new-c)
 				     (car rest-of-result))
 			(cadr rest-of-result))))))))
+  ;; follow ex 2.96
+  (define (pseudoremainder-terms a b)
+    (let ((f1 (first-term a))
+	  (f2 (first-term b)))
+      (let ((o1 (order f1))
+	    (o2 (order f2))
+	    (c (coeff f2)))
+	(let ((constant (exp c (+ 1 o1 (- o2)))))
+	  (let ((term (make-term 0
+				 constant)))
+	    (cadr (div-terms
+		   (mul-term-by-all-terms term a)
+		   b)))))))
+  (define (gcd-terms-coeff terms)
+    (define (recursive coeffs)
+      (if (null? (cddr coeffs))
+	  (greatest-common-divisor
+	   (car coeffs)
+	   (cadr coeffs))
+	  (greatest-common-divisor
+	   (car coeffs)
+	   (recursive (cdr coeffs)))))
+    (recursive (coeffs terms)))
+  (define (gcd-terms a b)
+    (if (empty-termlist? b)
+	(let ((coeffs-gcd (gcd-terms-coeff a)))
+	  (mul-term-by-all-terms 
+	   (make-term 0 (div 1 coeffs-gcd))
+	   a))
+	(gcd-terms b (pseudoremainder-terms a b))))
+  ;; 2.96
+
   ;; 2.91
   ;; follow ex 2.87
   (define (=zero?-p p)
@@ -643,12 +691,14 @@
   ;; 2.91
   ;; follow 2.93 & 2.94
   (define (gcd-poly a b)
-    (define (remainder-terms t1 t2)
-      (cadr (div-terms t1 t2)))
-    (define (gcd-terms t1 t2)
-      (if (empty-termlist? t2)
-	  t1
-	  (gcd-terms t2 (remainder-terms t1 t2))))
+    
+    ;; (define (remainder-terms t1 t2)
+    ;;   (cadr (div-terms t1 t2)))
+    ;; (define (gcd-terms t1 t2)
+    ;;   (if (empty-termlist? t2)
+    ;; 	  t1
+    ;; 	  (gcd-terms t2 (remainder-terms t1 t2))))
+    
     (if (same-variable? (variable a) (variable b))
 	(let ((t1 (term-list a))
 	      (t2 (term-list b)))
