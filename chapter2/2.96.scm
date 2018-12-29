@@ -30,27 +30,22 @@
 		 (mul-term-by-all-terms term a)
 		 b)))))))
 
-(define (gcd-terms a b)
-  (if (empty-termlist? b)
-      a
-      (gcd-terms b (pseudoremainder-terms a b))))
-
 ;; b
-(define (gcd-terms-coeff terms)
-  (define (recursive coeffs)
-    (if (null? (cddr coeffs))
-	(greatest-common-divisor
-	 (car coeffs)
-	 (cadr coeffs))
-	(greatest-common-divisor
-	 (car coeffs)
-	 (recursive (cdr coeffs)))))
-  (recursive (coeffs terms)))
-
+(define (gcd-terms-coeff l)
+  (define (recursive l)
+    (cond ((= 2 (length l))
+	   (greatest-common-divisor (car l) (cadr l)))
+	  ((= 1 (length l)) (car l))
+	  ((null? l) 0)
+	  (else (greatest-common-divisor
+		 (car l)
+		 (recursive (cdr l))))))
+  (recursive l))
 (define (gcd-terms a b)
   (if (empty-termlist? b)
-      (let ((coeffs-gcd (gcd-terms-coeff a)))
-	(mul-term-by-all-terms 
-	 (make-term 0 (div 1 coeffs-gcd))
-	 a))
+      (let ((coeffs-gcd (gcd-terms-coeff (coeffs a))))
+	(car (div-terms
+	      a
+	      (make-terms (type-tag a)
+			  (list (make-term 0 coeffs-gcd))))))
       (gcd-terms b (pseudoremainder-terms a b))))
