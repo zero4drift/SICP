@@ -131,6 +131,9 @@
 (define (greatest-common-divisor a b)
   (apply-generic 'gcd a b))
 ;; 2.93 & 2.94
+;; follow ex 2.97
+(define (reduce n d) (apply-generic 'reduce n d))
+;; 2.97
 
 
 ;; helper functions
@@ -167,6 +170,13 @@
   (put 'gcd '(scheme-number scheme-number)
        (lambda (s1 s2) (tag (gcd-scheme-number s1 s2))))
   ;; 2.93 & 2.94
+  ;; follow ex 2.97
+  (define (reduce-integers n d)
+    (let ((g (greatest-common-divisor n d)))
+      (list (div n g) (div d g))))
+  ;; 2.97
+  (put 'reduce '(scheme-number scheme-number)
+       (lambda (n d) (map tag (reduce-integers n d))))
   (put 'add '(scheme-number scheme-number)
        (lambda (x y) (tag (+ x y))))
   (put 'sub '(scheme-number scheme-number)
@@ -199,10 +209,15 @@
   ;; internal procedures
   (define (numer x) (car x))
   (define (denom x) (cdr x))
+  ;; (define (make-rat n d)
+  ;;   ;; follow ex 2.93 & 2.94
+  ;;   (let ((g (greatest-common-divisor n d)))
+  ;;     (cons (div n g) (div d g))))
+  ;; follow ex 2.97
   (define (make-rat n d)
-    ;; follow ex 2.93 & 2.94
-    (let ((g (greatest-common-divisor n d)))
-      (cons (div n g) (div d g))))
+    (let ((simple (reduce n d)))
+      (cons (car simple) (cadr simple))))
+  ;; 2.97
   ;; 2.93 & 2.94
   (define (add-rat x y)
     (make-rat (add (mul (numer x) (denom y))
@@ -501,7 +516,7 @@
 			  (negative (coeff first)))
 			 (negative-s (rest-terms-s terms))))))
   ;; follow ex 2.96
- (define (coeffs-s terms)
+  (define (coeffs-s terms)
     (map (lambda (t) (coeff t)) terms))
   (put 'coeffs '(polynomial-sparse) coeffs-s)
   ;; 2.96
@@ -534,8 +549,11 @@
 (define (rest-terms x)
   (apply-generic 'rest-terms x))
 
-(define (make-empty-termlist t)
-  ((get 'make (type-tag t)) '()))
+(define (make-terms t terms)
+  ((get 'make t)
+   (if (equal? t 'polynomial-sparse)
+       terms
+       (map coeff terms))))
 ;; 2.89 & 2.90
 ;; follow 2.96
 (define (coeffs t)
@@ -591,7 +609,7 @@
 	(let ((t1 (first-term L1))
 	      (t2 (first-term L2)))
 	  (if (> (order t2) (order t1))
-	      (list (make-empty-termlist L1) L1)
+	      (list (make-terms (type-tag L1) '()) L1)
 	      (let ((new-c (div (coeff t1) (coeff t2)))
 		    (new-o (sub (order t1) (order t2))))
 		(let ((rest-of-result
@@ -617,24 +635,59 @@
 	    (cadr (div-terms
 		   (mul-term-by-all-terms term a)
 		   b)))))))
-  (define (gcd-terms-coeff terms)
-    (define (recursive coeffs)
-      (if (null? (cddr coeffs))
-	  (greatest-common-divisor
-	   (car coeffs)
-	   (cadr coeffs))
-	  (greatest-common-divisor
-	   (car coeffs)
-	   (recursive (cdr coeffs)))))
-    (recursive (coeffs terms)))
+  (define (gcd-terms-coeff l)
+    (define (recursive l)
+      (cond ((= 2 (length l))
+	     (greatest-common-divisor (car l) (cadr l)))
+	    ((= 1 (length l)) (car l))
+	    ((null? l) 0)
+	    (else (greatest-common-divisor
+		   (car l)
+		   (recursive (cdr l))))))
+    (recursive l))
   (define (gcd-terms a b)
     (if (empty-termlist? b)
-	(let ((coeffs-gcd (gcd-terms-coeff a)))
-	  (mul-term-by-all-terms 
-	   (make-term 0 (div 1 coeffs-gcd))
-	   a))
+	(let ((coeffs-gcd (gcd-terms-coeff (coeffs a))))
+	  (car (div-terms
+		a
+		(make-terms (type-tag a)
+			    (list (make-term 0 coeffs-gcd))))))
 	(gcd-terms b (pseudoremainder-terms a b))))
   ;; 2.96
+
+  ;; follow 2.97
+  (define (reduce-terms n d)
+    (define (compute-constant a b c)
+      (let ((af (first-term a))
+	    (bf (first-term b))
+	    (cf (first-term c)))
+	(let ((c (coeff af))
+	      (o1 (max (order bf) (order cf)))
+	      (o2 (order af)))
+	  (exp c (+ 1 o1 (- o2))))))
+    (define (simplify a b)
+      (let ((g (gcd-terms-coeff (append (coeffs a) (coeffs b)))))
+	(let ((divider (make-terms (type-tag a) (list (make-term 0 g)))))
+	  (list (car (div-terms a divider)) (car (div-terms b divider))))))
+    (let ((g (gcd-terms n d)))
+      (let ((constant (compute-constant g n d)))
+	(let ((mn (mul-term-by-all-terms (make-term 0 constant) n))
+	      (md (mul-term-by-all-terms (make-term 0 constant) d)))
+	  (let ((gn (car (div-terms mn g)))
+		(gd (car (div-terms md g))))
+	    (simplify gn gd))))))	
+  (define (reduce-poly p1 p2)
+    (if (same-variable? (variable p1) (variable p2))
+	(let ((t1 (term-list p1))
+	      (t2 (term-list p2)))
+	  (let ((result (reduce-terms t1 t2)))
+	    (list (make-poly (variable p1) (car result))
+		  (make-poly (variable p1) (cadr result)))))
+	(error "Polys not in same variable -- REDUCE-POLY"
+	       (list p1 p2))))
+  (put 'reduce '(polynomial polynomial)
+       (lambda (n d) (map tag (reduce-poly n d))))
+  ;; 2.97
 
   ;; 2.91
   ;; follow ex 2.87
@@ -650,7 +703,7 @@
     (recursive (term-list p)))
   (put '=zero? '(polynomial) =zero?-p)
   ;; 2.87
-  
+
   ;; poly
   ;; follow 2.88
   (define (negative-poly n)
@@ -715,10 +768,8 @@
        (lambda (p1 p2) (tag (add-poly p1 p2))))
   (put 'mul '(polynomial polynomial)
        (lambda (p1 p2) (tag (mul-poly p1 p2))))
-  ;; (put 'div '(polynomial polynomial) (lambda (p1 p2) (tag (div-poly p1 p2))))
   (put 'make 'polynomial
        (lambda (var terms) (tag (make-poly var terms))))
-  ;; (put 'reduce '(polynomial polynomial) (lambda (a b) (map tag (reduce-poly a b)))) 
   'done)
 (define (make-polynomial var terms)
   ((get 'make 'polynomial) var terms))
