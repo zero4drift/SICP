@@ -127,6 +127,10 @@
 (define (negative n)
   (apply-generic 'negative n))
 ;; 2.87
+;; follow ex 2.93 & 2.94
+(define (greatest-common-divisor a b)
+  (apply-generic 'gcd a b))
+;; 2.93 & 2.94
 
 
 ;; helper functions
@@ -158,6 +162,11 @@
   (define (drop-scheme-number x) x)
   (put 'drop '(scheme-number) drop-scheme-number)
   ;; 2.85
+  ;; follow ex 2.93 & 2.94
+  (define gcd-scheme-number gcd)
+  (put 'gcd '(scheme-number scheme-number)
+       (lambda (s1 s2) (tag (gcd-scheme-number s1 s2))))
+  ;; 2.93 & 2.94
   (put 'add '(scheme-number scheme-number)
        (lambda (x y) (tag (+ x y))))
   (put 'sub '(scheme-number scheme-number)
@@ -191,8 +200,10 @@
   (define (numer x) (car x))
   (define (denom x) (cdr x))
   (define (make-rat n d)
-    (let ((g (gcd n d)))
-      (cons (/ n g) (/ d g))))
+    ;; follow ex 2.93 & 2.94
+    (let ((g (greatest-common-divisor n d)))
+      (cons (div n g) (div d g))))
+  ;; 2.93 & 2.94
   (define (add-rat x y)
     (make-rat (add (mul (numer x) (denom y))
                    (mul (numer y) (denom x)))
@@ -575,7 +586,7 @@
 					      L2)))
 			L2)))
 		  (list (adjoin-term (make-term new-o new-c)
-				      (car rest-of-result))
+				     (car rest-of-result))
 			(cadr rest-of-result))))))))
   ;; 2.91
   ;; follow ex 2.87
@@ -630,6 +641,23 @@
   (put 'div '(polynomial polynomial)
        (lambda (p1 p2) (tag (div-poly p1 p2))))
   ;; 2.91
+  ;; follow 2.93 & 2.94
+  (define (gcd-poly a b)
+    (define (remainder-terms t1 t2)
+      (cadr (div-terms t1 t2)))
+    (define (gcd-terms t1 t2)
+      (if (empty-termlist? t2)
+	  t1
+	  (gcd-terms t2 (remainder-terms t1 t2))))
+    (if (same-variable? (variable a) (variable b))
+	(let ((t1 (term-list a))
+	      (t2 (term-list b)))
+	  (make-poly (variable a) (gcd-terms t1 t2)))
+	(error "Polys not in same var -- GCD-POLY"
+	       (list a b))))
+  (put 'gcd '(polynomial polynomial)
+       (lambda (p1 p2) (tag (gcd-poly p1 p2))))
+  ;; 2.93 & 2.94
 
   ;; interface to rest of the system
   (define (tag p) (attach-tag 'polynomial p))
@@ -640,7 +668,6 @@
   ;; (put 'div '(polynomial polynomial) (lambda (p1 p2) (tag (div-poly p1 p2))))
   (put 'make 'polynomial
        (lambda (var terms) (tag (make-poly var terms))))
-  ;; (put 'greatest-common-divisor '(polynomial polynomial) (lambda (a b) (tag (gcd-poly a b))))
   ;; (put 'reduce '(polynomial polynomial) (lambda (a b) (map tag (reduce-poly a b)))) 
   'done)
 (define (make-polynomial var terms)
