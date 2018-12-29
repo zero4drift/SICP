@@ -1,10 +1,18 @@
+;; generic operation
+(define (make-terms t terms)
+  ((get 'make t)
+   (if (equal? t 'polynomial-sparse)
+       terms
+       (map coeff terms))))
+
+;; insice install polynomial procedure
 (define (div-terms L1 L2)
   (if (empty-termlist? L1)
       (list L1 L1)
       (let ((t1 (first-term L1))
 	    (t2 (first-term L2)))
 	(if (> (order t2) (order t1))
-	    (list (make-empty-termlist L1) L1)
+	    (list (make-terms (type-tag L1) '()) L1)
 	    (let ((new-c (div (coeff t1) (coeff t2)))
 		  (new-o (sub (order t1) (order t2))))
 	      (let ((rest-of-result
