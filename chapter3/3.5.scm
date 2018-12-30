@@ -22,6 +22,7 @@
 	(y (/ (+ (y-point p1) (y-point p2)) 2)))
     (make-point x y)))
 
+;; there the rectangular is just a square.
 (define (radius-square p1 p2)
   (let ((x1 (x-point p1))
 	(x2 (x-point p2)))
