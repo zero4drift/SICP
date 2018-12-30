@@ -10,6 +10,6 @@
 	     (generate))
 	    ((eq? s 'reset)
 	     reset)
-	    (else (error "Unknown request -- META-ACCOUNT"
+	    (else (error "Unknown request -- RAND"
 			 s))))
     dispatch))
