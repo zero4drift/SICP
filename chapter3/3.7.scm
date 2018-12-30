@@ -6,8 +6,8 @@
 		 balance)
 	  "Insufficient funds"))
     (define (deposit amount)
-      (set! balance (+ balance amount))
-      balance)
+      (begin (set! balance (+ balance amount))
+	     balance))
     (define (joint new-password)
       (begin (set! password (cons new-password password))
 	     dispatch))
@@ -23,8 +23,3 @@
 
 (define (make-joint  acc old-pass new-pass)
   ((acc old-pass 'joint) new-pass))
-
-(define (memq item x)
-  (cond ((null? x) false)
-	((eq? item (car x)) x)
-	(else (memq item (cdr x)))))
