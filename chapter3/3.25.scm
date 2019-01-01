@@ -12,7 +12,7 @@
 		  (recursive
 		   (cdr keys)
 		   (cdr subtable))
-		  false))))
+		  #f))))
       (if (null? keys)
 	  (error "Keys should not be null")
 	  (recursive keys (cdr local-table))))
@@ -44,7 +44,7 @@
 	  (error "Keys should not be null")
 	  (recursive keys local-table)))
     (define (assoc key records)
-      (cond ((null? records) false)
+      (cond ((null? records) #f)
 	    ((equal? key (caar records)) (car records))
 	    (else (assoc key (cdr records)))))
     (define (dispatch m)
