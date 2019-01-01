@@ -5,8 +5,8 @@
 (define (infinite? l)
   (let ((checked '()))
     (define (recursive x)
-      (cond ((null? x) false)
-	    ((memq x checked) true)
+      (cond ((null? x) #f)
+	    ((memq x checked) #t)
 	    (else
 	     (begin (set! checked (cons x checked))
 		    (recursive (cdr x))))))
