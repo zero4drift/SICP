@@ -1,5 +1,5 @@
 (define (lookup-t given-key set-of-records)
-  (cond ((null? set-of-records) false)
+  (cond ((null? set-of-records) #f)
 	((= given-key (key (entry set-of-records)))
 	 (entry set-of-records))
 	((> given-key (key (entry set-of-records)))
@@ -50,8 +50,8 @@
 	    (let ((record (lookup-t key-2 (item subtable))))
 	      (if record
 		  (item record)
-		  false))
-	    false)))
+		  #f))
+	    #f)))
     (define (insert! key-1 key-2 value)
       (let ((subtable (lookup-t key-1 local-table)))
 	(if subtable
