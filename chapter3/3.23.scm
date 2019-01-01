@@ -18,12 +18,14 @@
 
 (define (front-deque deque)
   (if (empty-deque? deque)
-      (error "FRONT called with an empty deque" deque)
+      (error "FRONT called with an empty deque"
+	     (display-deque deque))
       (car (front-ptr deque))))
 
 (define (rear-deque deque)
   (if (empty-deque? deque)
-      (error "FRONT called with an empty deque" deque)
+      (error "FRONT called with an empty deque"
+	     (display-deque deque))
       (car (rear-ptr deque))))
 
 (define (make-pair item front rear)
@@ -52,7 +54,7 @@
     (cond ((empty-deque? deque)
 	   (set-front-ptr! deque new-pair)
 	   (set-rear-ptr! deque new-pair)
-	   deque)
+	   (display-deque deque))
 	  (else
 	   (set-pair-front (front-ptr deque) new-pair)
 	   (set-pair-rear new-pair (front-ptr deque))
@@ -65,7 +67,7 @@
 	    deque)
 	   (set-rear-ptr! deque new-pair)
 	   (set-front-ptr! deque new-pair)
-	   deque)
+	   (display-deque deque))
 	  (else
 	   (set-pair-rear (rear-ptr deque) new-pair)
 	   (set-pair-front new-pair (rear-ptr deque))
@@ -74,18 +76,30 @@
 
 (define (front-delete-deque! deque)	;delete the front one
   (cond ((empty-deque? deque)
-	  (error "DELETE! called with an empty deque" deque))
+	 (error "DELETE! called with an empty deque"
+		(display-deque deque)))
 	(else
-	 (set-front-ptr! deque (pair-rear (front-ptr deque)))
-	 (set-pair-front (front-ptr deque) '())
+	 (if (eq? (front-ptr deque) (rear-ptr deque))
+	     (begin
+	       (set-front-ptr! deque '())
+	       (set-rear-ptr! deque '()))
+	     (begin
+	       (set-front-ptr! deque (pair-rear (front-ptr deque)))
+	       (set-pair-front (front-ptr deque) '())))
 	 (display-deque deque))))
 
 (define (rear-delete-deque! deque)	;delete the rear one
   (cond ((empty-deque? deque)
-	 (error "DELETE! called with an empty deque" deque))
+	 (error "DELETE! called with an empty deque"
+		(display-deque deque)))
 	(else
-	 (set-rear-ptr! deque (pair-front (rear-ptr deque)))
-	 (set-pair-rear (rear-ptr deque) '())
+	 (if (eq? (front-ptr deque) (rear-ptr deque))
+	     (begin
+	       (set-front-ptr! deque '())
+	       (set-rear-ptr! deque '()))
+	     (begin
+	       (set-rear-ptr! deque (pair-front (rear-ptr deque)))
+	       (set-pair-rear (rear-ptr deque) '())))
 	 (display-deque deque))))
 
 (define (display-deque deque)
@@ -93,8 +107,8 @@
     (if (null? ptr)
 	'()
 	(cons (pair-item ptr)
-	    (fetch-item (pair-rear ptr)))))
+	      (fetch-item (pair-rear ptr)))))
   (if (not (empty-deque? deque))
       (let ((front (front-ptr deque)))
-	(display (fetch-item front)))
+	(fetch-item front))
       '()))
