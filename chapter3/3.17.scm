@@ -10,8 +10,3 @@
 		  (recursive (cdr x))
 		  1)))))
     (recursive x)))
-
-(define (memq p1 p2)
-  (cond ((null? p2) false)
-	((equal? p1 (car p2)) p2)
-	(else (memq p1 (cdr p2)))))
