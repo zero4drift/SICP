@@ -17,7 +17,9 @@
 	    (else (error "Unknown operation -- WIRE" m))))
     dispatch))
 
-;; apply the proc when apply accept-action-procedure to it
-;; get the initial status of the wire based on the initial input
+;; apply the proc when apply accept-action-procedure to it,
+;; record the agenda item in the agenda table,
+;; then call procedure propagate will handle all the agenda items;
 ;; if not
-;; the output of half-adder operation would not be affected by the inputs
+;; there will be no agenda item reated to current signal modification,
+;; thus the output of component would not be affected by the inputs.
