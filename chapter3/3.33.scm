@@ -7,5 +7,5 @@
 	(v (make-connector)))
     (multiplier u c v)
     (adder a b v)
-    (constant u 2)
+    (constant 2 u)
     'ok))
