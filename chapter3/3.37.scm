@@ -13,7 +13,8 @@
 
 (define (cv x)
   (let ((y (make-connector)))
-    (constant x y)))
+    (constant x y)
+    y))
 
 (define (c* x y)
   (let ((z (make-connector)))
