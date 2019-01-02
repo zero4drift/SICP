@@ -23,3 +23,10 @@
 ;; if not
 ;; there will be no agenda item reated to current signal modification,
 ;; thus the output of component would not be affected by the inputs.
+
+;; take inverter as an example:
+;; when initialize an inverter,;
+;; if procedure accept-action-procedure! does not call
+;; the first parameter - proc, then there will be no reated item
+;; in agenda table, thus call propagate does nothing, then the
+;; output of inverter stay unchanged, not affected by the input.
