@@ -1,7 +1,16 @@
-;; 12345
+;; first
+;; 0
+;; value: x
+
+;; second
+;; 1
+;; 2
+;; 3
+;; 4
 ;; 5
+;; value: 5
 
-;; 67
+;; third
+;; 6
 ;; 7
-
-;; do not know how display-line behaves
+;; value: 7
