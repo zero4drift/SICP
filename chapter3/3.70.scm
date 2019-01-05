@@ -33,12 +33,11 @@
 
 ;; b
 
-(define s (cons-stream 1 (merge (scale-stream s 2)
-				(merge (scale-stream s 3)
-				       (scale-stream s 5)))))
+(define (weighted235 p)
+  (+ (* 2 (car p)) (* 3 (cadr p)) (* 5 (car p) (cadr p))))
 
-(define desired2
-  (weighted-pairs
-   s
-   s
-   (lambda (p) (+ (* 2 (car p)) (* 3 (cadr p)) (* 5 (car p) (cadr p))))))
+(define s (cons-stream 1 (merge-weighted (scale-stream s 2)
+					 (merge-weighted (scale-stream s 3)
+							 (scale-stream s 5)
+							 weighted235)
+					 weighted235)))
