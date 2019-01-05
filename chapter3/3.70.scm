@@ -1,3 +1,19 @@
+(define (merge s1 s2)
+  (cond ((stream-null? s1) s2)
+	((stream-null? s2) s1)
+	(else
+	 (let ((s1car (stream-car s1))
+	       (s2car (stream-car s2)))
+	   (cond ((< s1car s2car)
+		  (cons-stream s1car (merge (stream-cdr s1) s2)))
+		 ((> s1car s2car)
+		  (cons-stream s2car (merge s1 (stream-cdr s2))))
+		 (else
+		  (cons-stream s1car
+			       (merge
+				(stream-cdr s1)
+				(stream-cdr s2)))))))))
+
 (define (merge-weighted s1 s2 weight)
   (cond ((stream-null? s1) s2)
 	((stream-null? s2) s1)
@@ -36,8 +52,13 @@
 (define (weighted235 p)
   (+ (* 2 (car p)) (* 3 (cadr p)) (* 5 (car p) (cadr p))))
 
-(define s (cons-stream 1 (merge-weighted (scale-stream s 2)
-					 (merge-weighted (scale-stream s 3)
-							 (scale-stream s 5)
-							 weighted235)
-					 weighted235)))
+;; in Chinese version of SICP, i or j must be fully divided by 2, 3 or 5
+(define s (cons-stream 1 (merge (scale-stream s 2)
+				(merge (scale-stream s 3)
+				       (scale-stream s 5)))))
+
+(define desired2
+  (weighted-pairs
+   s
+   s
+   weighted235))
