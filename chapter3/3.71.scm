@@ -19,3 +19,10 @@
 (define Ramanujan-streams
   (Ramanujan-pairs base-stream
 		   (stream-cdr base-stream)))
+
+;; 1729
+;; 4104
+;; 13832
+;; 20683
+;; 32832
+;; 39312
