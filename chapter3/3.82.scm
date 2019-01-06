@@ -11,7 +11,7 @@
 (define (rand-numbers a1 a2)
   (cons-stream
    (random-in-range a1 a2)
-   (random-numbers a1 a2)))
+   (rand-numbers a1 a2)))
 
 (define (make-point x y)
   (cons x y))
