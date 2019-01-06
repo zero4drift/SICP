@@ -9,6 +9,4 @@
       (add-streams
        (scale-stream vc (/ 1 l))
        (scale-stream il (- (/ r l)))))
-    (cons
-     vc
-     il)))
+    (stream-map cons vc il)))
