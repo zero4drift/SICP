@@ -33,9 +33,9 @@
     (square (abs (/ (- x1 x2) 2)))))
 
 (define (p r1 r2 m1 m2 rs)
-  (< (+ (square (- r1 m1))
-	 (square (- r2 m2)))
-      rs))
+  (not (> (+ (square (- r1 m1))
+	     (square (- r2 m2)))
+	  rs)))
 
 (define (random-in-range low high)
   (let ((range (- high low)))
