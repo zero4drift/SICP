@@ -40,3 +40,24 @@
 
 [SICP Systems with Generic Operations](https://zero4drift.github.io/posts/sicp-system-with-generic-operations/)
 
+## chapter-3
+
+### 3.1
+
+[SICP Section 3.1 Summary & Solutions](https://zero4drift.github.io/posts/sicp-refresher-chapter-3%281%29/)
+
+### 3.2
+
+[SICP Section 3.2 Summary & Solutions](https://zero4drift.github.io/posts/sicp-refresher-chapter-3%282%29/)
+
+### 3.3
+
+[SICP Section 3.3 Summary & Solutions](https://zero4drift.github.io/posts/sicp-refresher-chapter-3%283%29/)
+
+### 3.4
+
+[SICP Section 3.4 Summary & Solutions](https://zero4drift.github.io/posts/sicp-refresher-chapter-3%284%29/)
+
+### 3.5
+
+[SICP Section 3.5 Summary & Solutions](https://zero4drift.github.io/posts/sicp-refresher-chapter-3%285%29/)
