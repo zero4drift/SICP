@@ -31,7 +31,7 @@
 	      (and (null? rest) (not result) false)
 	      ((not result) eval-or rest env))))))
 
-;; derived expression
+;; derived expression based on if
 
 (define (make-and predicates)
   (list 'and predicates))
@@ -39,35 +39,29 @@
 (define (make-or predicates)
   (list 'or predicates))
 
-(define (make-or predicates)
-  (list 'or predicates))
-
-(define (make-cond clause1 clause2 clause3)
-  (list 'cond clause1 clause2 clause3))
-
-(define (and->cond exp)
+(define (and->if exp)
   (let ((predicates (all-predicates exp)))
     (let ((first (first-predicate predicates))
 	  (rest (rest-predicates predicates)))
-      (make-cond
-       ((false? first) false)
-       ((and (null? rest) (true? first)) first)
-       (else (make-and rest))))))
+      (make-if
+       first
+       (make-and rest)
+       first))))
 
 (define (or->cond exp)
   (let ((predicates (all-predicates exp)))
     (let ((first (first-predicate predicates))
 	  (rest (rest-predicates predicates)))
-      (make-cond
-       ((true? first) first)
-       ((and (null? rest) (false? first)) false)
-       (else (make-or rest))))))
+      (make-if
+       first
+       first
+       (make-or rest)))))
 
 (define (eval-and exp env)
-  (eval (and->cond exp) env))
+  (eval (and->if exp) env))
 
 (define (eval-or exp env)
-  (eval (or->cond exp) env))
+  (eval (or->if exp) env))
 
 ;; so just implement the eval-and and eval-or in
 ;; the original eval procedure
