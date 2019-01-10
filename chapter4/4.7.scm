@@ -10,10 +10,10 @@
   (car exp))
 
 (define (let*-body exp)
-  (cadr exp))
+  (cddr exp))
 
 (define (make-let binding body)
-  (list 'let (list binding) body))
+  (cons 'let (list binding) body))
 
 (define (make-neseted-lets bindings body)
   (if (null? (cdr bindings))

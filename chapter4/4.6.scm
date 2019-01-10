@@ -5,10 +5,10 @@
   (cdr exp))
 
 (define (let-bindings exp)
-  (cadr exp))
+  (car exp))
 
 (define (let-body exp)
-  (cddr exp))
+  (cdr exp))
 
 (define (var binding)
   (car binding))
