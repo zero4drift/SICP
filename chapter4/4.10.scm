@@ -2,7 +2,7 @@
 ;; change the evaluation order of application parameters
 
 ;; change the position of the operator
-;; replace it at the end application
+;; replace it at the end of application
 
 (define (last-one lst)
   (if (null? (cdr lst))
