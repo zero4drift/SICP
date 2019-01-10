@@ -5,10 +5,10 @@
   (cdr exp))
 
 (define (let-bindings exp)
-  (car exp))
+  (cadr exp))
 
 (define (let-body exp)
-  (cdr exp))
+  (cddr exp))
 
 (define (var binding)
   (car binding))
@@ -25,7 +25,7 @@
     (let ((var-list (map var bindings))
 	  (exp-list (map expression bindings)))
       (let ((proc (make-lambda var-list body)))
-	(cons proc exp-list)))))
+	(list proc exp-list)))))
 
 (define (eval-let exp env)
   (eval (let->application exp) env))
