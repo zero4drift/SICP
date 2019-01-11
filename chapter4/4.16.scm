@@ -3,7 +3,7 @@
 (define (lookup-variable-value var env)
   (define (env-loop env)
     (define (scan vars vals)
-      (cons ((null? vars)
+      (cond ((null? vars)
 	     (env-loop (enclosing-environment env)))
 	    ((eq? var (car vars))
 	     (if (eq? (car vals) '*unassigned*)
