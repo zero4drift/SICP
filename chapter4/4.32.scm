@@ -5,5 +5,5 @@
 ;; just like the procedure list-ref
 ;; only computes the desired car part
 ;; as for the version defined in chapter 3
-;; every car part would be computed until n equals to
+;; every car part would be computed until n equals to index;
 ;; the one in chapter 4 text is more efficient
